@@ -1,0 +1,28 @@
+.button_box {
+  text-align: center;
+  .wallet_button {
+    border: none;
+    display: block;
+    background: #fff;
+    border-radius: 30px;
+    width: 240px;
+    text-align: center;
+    font-weight: 700;
+    padding: 15px;
+    text-decoration: none;
+    img{
+      max-width: 25px;
+      margin-right: 5px;
+    }
+    @media screen and (max-width: 500px) {
+      font-size: 0.5rem;
+    }
+  }
+
+  .wallet_button:active {
+    background: #5D5D5D;
+  }
+  .approve_button {
+
+  }
+}
