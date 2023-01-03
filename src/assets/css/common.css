@@ -1,7 +1,8 @@
 body{
-    min-width: 1650px;
-    max-width: 1920px;
+    /*min-width: 1650px;*/
+    /*max-width: 1920px;*/
     margin: 0 auto;
+    overflow-x: hidden;
 }
 .modal-content{
     border-radius: 3rem;

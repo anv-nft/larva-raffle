@@ -10,7 +10,7 @@ import Caver from "caver-js";
 import {isTestNet} from "../utils/web3/networks";
 import {store} from "../store";
 import {CHANGE_ADDRESS} from "../store/actions/walletAddress";
-import LarvaNFTBreeding from "../components/larva_nft_breeding/LarvaNFTBreeding";
+import MyPage from "../components/mypage/myPage";
 import {useTranslation} from "react-i18next";
 import i18next from "../lang/i18n";
 
@@ -185,7 +185,7 @@ function Index() {
             <Routes>
                 {
                     (openedStatus === "open") &&
-                    <Route exact path="/breeding" element={<LarvaNFTBreeding accounts={accounts} apiToken={apiToken}
+                    <Route exact path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
                                                                              isConnected={isConnectedWallet}
                                                                              networkId={networkId}
                                                                              handleKaikasConnect={() => connectKaikas()}
