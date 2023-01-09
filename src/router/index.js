@@ -13,6 +13,8 @@ import {CHANGE_ADDRESS} from "../store/actions/walletAddress";
 import MyPage from "../components/mypage/myPage";
 import {useTranslation} from "react-i18next";
 import i18next from "../lang/i18n";
+import AOS from "aos";
+import walletAddressReducer from "../store/reducers/walletAddressReducer";
 
 function Index() {
     const {t} = useTranslation();
@@ -21,7 +23,7 @@ function Index() {
     const [accounts, setAccounts] = useState([]);
     const [apiToken, setApiToken] = useState(null);
     const [networkId, setNetworkId] = useState(1);
-    const [isConnectedWallet, setConnectWallet] = useState(undefined);
+    // const [isConnectedWallet, setConnectWallet] = useState(undefined);
     const [language, setLanguage] = useState("ko");
     const [openedStatus, setOpenedStatus] = useState("close");
 
@@ -30,73 +32,28 @@ function Index() {
         i18next.changeLanguage(lang);
     }
 
-    useEffect(() => {
-        async function openedCheck() {
-            const status = await GET(`/api/v1/breeding/isOpened`);
-            if (status.result === 'success') {
-                setOpenedStatus("open");
-            }
-            console.log(status);
-        }
-
-        openedCheck();
-        if (window.location.pathname === '/breeding') {
-            const isConnected = window.localStorage.getItem("isConnected");
-            if (isConnected === 'YES') {
-                connectKaikas();
-            } else {
-                setConnectWallet("NO");
-            }
-            checkWalletClosed();
-        }
-    }, []);
-
-
-    useEffect(() => { // CHECK CONNECTION
-        async function logoutEffect() {
-            await logout();
-        }
-
-        if (didMount.current) {
-            didMount.current = false;
-            return;
-        }
-        if (!active) {
-            logoutEffect();
-        }
-        // 새고로침시 로그아웃 되는 로직개선
-        if (account) {
-            const storeAddress = store.getState().wallet.address;
-            if (storeAddress !== account.toLowerCase()) {
-                logoutEffect();
-            }
-        }
-    }, [active, account]);
-
-    async function checkWalletClosed() {
-        setInterval(async () => {
-            const isConnected = window.localStorage.getItem("isConnected");
-            // console.log(isConnected);
-            if (isConnected === 'YES') {
-                const isUnlocked = await window.klaytn._kaikas.isUnlocked();
-                // console.log(isUnlocked);
-                if (!isUnlocked) {
-                    await logout();
-                }
-            } else {
-                setConnectWallet("NO");
-            }
-        }, 1000);
-    }
+    // async function checkWalletClosed() {
+    //     setInterval(async () => {
+    //         const isConnected = window.localStorage.getItem("isConnected");
+    //         // console.log(isConnected);
+    //         if (isConnected === 'YES') {
+    //             const isUnlocked = await window.klaytn._kaikas.isUnlocked();
+    //             // console.log(isUnlocked);
+    //             if (!isUnlocked) {
+    //                 await logout();
+    //             }
+    //         } else {
+    //             setConnectWallet("NO");
+    //         }
+    //     }, 1000);
+    // }
 
     function loadWalletAttributes(account, chainId) {
-        setConnectWallet('YES');
         let tempAccounts = [];
         tempAccounts.push(account);
         setAccounts(tempAccounts);
         store.dispatch(CHANGE_ADDRESS(account, chainId));
         setNetworkId(chainId);
-        window.localStorage.setItem('isConnected', 'YES');
     }
 
     async function connectKaikas() {
@@ -116,7 +73,7 @@ function Index() {
                 const token = localStorage.getItem('aniverse_token');
                 if (token === null) {
                     //토큰생성
-                    const res = await GET(`/api/v1/auth/breeding/${account}/uuid`);
+                    const res = await GET(`/api/v1/auth/raffle/${account}/uuid`);
                     // sign
                     const message = res.uuid;
                     const provider = window['klaytn'];
@@ -125,7 +82,7 @@ function Index() {
                     await caver.klay.sign(message, account).then(async (message) => {
                         // get JWT
                         // jwt = await requestSignin(address, signedMessage);
-                        await POST(`/api/v1/auth/breeding/signin`, {
+                        await POST(`/api/v1/auth/raffle/signin`, {
                             address: account,
                             message
                         }).then((sign) => {
@@ -163,37 +120,55 @@ function Index() {
     }
 
     async function logout() {
-        setConnectWallet("NO");
-        window.localStorage.setItem("isConnected", "NO");
         window.localStorage.removeItem("aniverse_token");
         setNetworkId(undefined);
         setAccounts([]);
+        store.dispatch(CHANGE_ADDRESS('', ''));
         try {
             await deactivate();
         } catch (e) {
             console.log(e);
         }
     }
+    useEffect(() => { // CHECK CONNECTION
+        async function logoutEffect() {
+            await logout();
+        }
 
+        if (didMount.current) {
+            didMount.current = false;
+            return;
+        }
+        if (!active) {
+            logoutEffect();
+        }
+        // 새고로침시 로그아웃 되는 로직개선
+        if (account) {
+            const storeAddress = store.getState().wallet.address;
+            if (storeAddress !== account.toLowerCase()) {
+                logoutEffect();
+            }
+        }
+    }, [active, account]);
     return (
 
         <Router>
-            <Header accounts={accounts} apiToken={apiToken} isConnected={isConnectedWallet} networkId={networkId}
+            <Header accounts={accounts} apiToken={apiToken} networkId={networkId}
                     openedStatus={openedStatus}
                     handleKaikasConnect={() => connectKaikas()} handleLogout={() => logout()}
                     langChangeHandler={langChangeHandler} t={t} language={language}/>
             <Routes>
-                {
-                    (openedStatus === "open") &&
-                    <Route exact path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
-                                                                             isConnected={isConnectedWallet}
-                                                                             networkId={networkId}
-                                                                             handleKaikasConnect={() => connectKaikas()}
-                                                                             handleLogout={() => logout()}/>}>
-                    </Route>
-                }
+                {accounts && accounts.length > 0 ? (
+                <Route exact path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
+                                                             networkId={networkId}
+                                                             handleKaikasConnect={() => connectKaikas()}
+                                                             handleLogout={() => logout()}/>}>
+                </Route>
+                    ):(
+                        <></>
+                )}
                 <Route exact path="*"
-                       element={<Home t={t} openedStatus={openedStatus}/>}>
+                       element={<Home t={t} accounts={accounts} apiToken={apiToken} networkId={networkId}/>}>
                 </Route>
             </Routes>
             <Footer/>

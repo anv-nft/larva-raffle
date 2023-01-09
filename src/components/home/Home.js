@@ -3,6 +3,8 @@ import { ScrollParallax } from "react-just-parallax";
 import "swiper/swiper.scss";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import LoadingModal from "../loading_modal/LoadingModal"
+import SelectNftBoxModal from "./select_nft_box/SelectNftBoxModal";
 import VisualBackground from "../../assets/images/home/back.png";
 import VisualCard01 from "../../assets/images/home/card_01.png";
 import VisualCard02 from "../../assets/images/home/card_02.png";
@@ -13,58 +15,59 @@ import ContentBackground from "../../assets/images/home/back_mid_01.png";
 import ReffleItem01 from "../../assets/images/home/reffle_item_01.png";
 import styles from "./Home.module.scss";
 import {Modal} from "react-bootstrap";
+import {POST, GET} from "../../api/api";
 
 export default function Home(props) {
+    const [showLoading, setShowLoading] = useState(false); // 로딩 모달
+    const [selectBox, setSelectBox] = useState(false); // 셀렉트 박스
 
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
     const [alerts, setAlerts] = useState(""); // 알림 메세지
-    const raffleList = [{
-        'idx': 1,
-        'title':'에어팟 프로 (2세대)',
-        'price':1553,
-        'status':52,
-        'image_url': '/assets/images/home/reffle_item_01.png'
-    },{
-        'idx': 2,
-        'title':'라바쿠션',
-        'price':102,
-        'status':2,
-        'image_url': '/assets/images/home/reffle_item_02.png'
-    },{
-        'idx': 3,
-        'title':'BHC 맛초킹 콤보 + 콜라 1.25L',
-        'price':89,
-        'status':1655,
-        'image_url': '/assets/images/home/reffle_item_03.png'
-    },{
-        'idx': 4,
-        'title':'스타벅스 부드러운 디저트',
-        'price':48,
-        'status':552,
-        'image_url': '/assets/images/home/reffle_item_04.png'
-    }];
+    const [raffleList, setRaffleList] = useState([]);
+    const [raffleInfo, setRaffleInfo] = useState([]);
     function closeAlert() {
         setShowAlertModal(false);
         setAlerts("");
     }
 
-    // 브리딩 시간안내
-    function breedingAlert() {
-        setAlerts(`${props.t("breeding_date")} \n2022/11/8 20:00 ~ 2022/11/9 20:00`);
-        setShowAlertModal(true);
-        return false;
+    // 지갑연결 확인
+    function walletCheck() {
+        console.log(props);
+        if (props.accounts[0] === undefined) {
+            setAlerts("Please connect wallet.");
+            setShowAlertModal(true);
+            return false;
+        }
+        return true;
     }
-    function reffle (idx) {
-        console.log(idx);
+    // nft 리스트 출력
+    function nftListOpen(idx) {
+        if (!walletCheck()) {
+            return false;
+        }
+        setSelectBox(true);
     }
-
     useEffect(() => {
         AOS.init({
             duration: 1000
         });
     });
+    useEffect(() => {
+        async function getCurrentRaffleList(){
+            const address = props.accounts[0];
+            await GET(`/api/v1/raffle/getCurrentRaffleList`, {
+                address,
+            }, props.apiToken).then(async (result) => {
+                if (result.result === 'success') {
+                    setRaffleList(result.data);
+                    setRaffleInfo(result.info);
+                }
+            });
+        }
+        getCurrentRaffleList();
+    }, []);
     return (
-        <div className={styles.home}>
+        <div>
             <section className={styles.visual_section}>
                 <img className={styles.background_img} src={VisualBackground} alt="Visual Background"/>
                 <ScrollParallax strength={0.2} lerpEase={0.06} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
@@ -83,7 +86,7 @@ export default function Home(props) {
                        <span>RAFFLE EVENT</span>
                         <div className={styles.visual_box_title_img}>
                             <img src={VisualTitleBadge}/>
-                            <span>1회차</span>
+                            <span>{raffleInfo.round}회차</span>
                         </div>
                     </h1>
                     <p className={styles.visual_box_text}>
@@ -95,11 +98,11 @@ export default function Home(props) {
                     <div className={styles.visual_box_date}>
                         <div>
                             <div>기간</div>
-                            <div>22.10.01 AM 00:00<br/>~ 22.12.16 PM 00:00</div>
+                            <div>{raffleInfo.start_date}<br/>~ {raffleInfo.end_date}</div>
                         </div>
                         <div>
                             <div>발표</div>
-                            <div>22.12.16 AM 00:00</div>
+                            <div>{raffleInfo.announcement_date}</div>
                         </div>
                     </div>
                 </div>
@@ -111,7 +114,7 @@ export default function Home(props) {
                     <div className={styles.content_box}>
                         {
                             raffleList.map((item, index) => (
-                                <div key={index} className={styles.raffle_item}>
+                                <div key={index} className={styles.raffle_item} data-aos="flip-right">
                                     <div className={styles.raffle_item_info}>
                                         <img src={ReffleItem01} />
                                         <h6>{item.title}</h6>
@@ -124,7 +127,7 @@ export default function Home(props) {
                                             <p>{item.status.toLocaleString('ko-KR')}<span>개</span></p>
                                         </div>
                                     </div>
-                                    <button onClick={() => reffle(item.idx)} className={styles.raffle_btn}>응모하기</button>
+                                    <button onClick={() => nftListOpen(item.idx)} className={styles.raffle_btn}>응모하기</button>
                                 </div>
                             ))
                         }
@@ -146,6 +149,12 @@ export default function Home(props) {
                     </button>
                 </Modal.Footer>
             </Modal>
+            <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
+            {selectBox ? (
+                <SelectNftBoxModal selectBox={selectBox} setSelectBox={setSelectBox}
+                                   userAddress={props.accounts[0]} networkId={props.networkId} apiToken={props.apiToken}
+                                   setShowLoading={setShowLoading}/>) : (<></>)
+            }
         </div>
     );
 }

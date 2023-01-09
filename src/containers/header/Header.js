@@ -1,17 +1,19 @@
 import React, {useState} from 'react'
-import { useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {Link} from "react-router-dom";
 import logo from "../../assets/images/common/logo.png";
 import ConnectWallet from "../../components/connect_wallet/ConnectWallet";
 import styles from "./Header.module.scss";
 import myPageButton from "../../assets/images/icon/icon_mypage.png";
-import engButton from "../../assets/images/icon/eng_btn.png";
-import koButton from "../../assets/images/icon/ko_btn.png";
-import menuButton from "../../assets/images/icon/menu_btn.png";
-import aniverseIcon from "../../assets/images/icon/icon_larvaNFT.png";
-import discordIcon from "../../assets/images/icon/icon_discord.png";
-import twitterIcon from "../../assets/images/icon/icon_twitter.png";
-import kakaoIcon from "../../assets/images/icon/icon_kakao.png";
+import {store} from "../../store";
+// import engButton from "../../assets/images/icon/eng_btn.png";
+// import koButton from "../../assets/images/icon/ko_btn.png";
+// import menuButton from "../../assets/images/icon/menu_btn.png";
+// import aniverseIcon from "../../assets/images/icon/icon_larvaNFT.png";
+// import discordIcon from "../../assets/images/icon/icon_discord.png";
+// import twitterIcon from "../../assets/images/icon/icon_twitter.png";
+// import kakaoIcon from "../../assets/images/icon/icon_kakao.png";
+
 function Header(props) {
     const location = useLocation();
     const [menuStatus, setMenuStatus] = useState(false);
@@ -19,26 +21,26 @@ function Header(props) {
         // 👇️ passed function to setState
         setMenuStatus(current => !current);
     };
+    const stateAddress = store.getState().wallet.address;
     return (
         <>
             <div className={styles.header}>
-                <img className={styles.logo_img} src={logo} alt="header logo"/>
+                <Link to="/">
+                    <img className={styles.logo_img} src={logo} alt="header logo"/>
+                </Link>
                 <div>
-                    <Link to="/mypage" className={styles.my_page_btn}>
-                        <img src={myPageButton}/> My Page
-                    </Link>
                     {
-                        props.accounts && props.accounts.length > 0 && props.isConnected === 'YES' ? (
-
-                            <ConnectWallet accounts={props.accounts} apiToken={props.apiToken}
-                                           isConnected={props.isConnected} networkId={props.networkId}
-                                           handleKaikasConnect={() => props.handleKaikasConnect()}
-                                           handleLogout={() => props.handleLogout()}/>
-
-
+                        stateAddress && stateAddress.length > 0 ? (
+                            <>
+                                <Link to="/mypage" className={styles.my_page_btn}>
+                                    <img src={myPageButton}/> My Page
+                                </Link>
+                                <ConnectWallet accounts={props.accounts} apiToken={props.apiToken} networkId={props.networkId}
+                                               handleKaikasConnect={() => props.handleKaikasConnect()}
+                                               handleLogout={() => props.handleLogout()}/>
+                            </>
                         ) : (
                             <ConnectWallet accounts={props.accounts} apiToken={props.apiToken}
-                                           isConnected={props.isConnected}
                                            networkId={props.networkId}
                                            handleKaikasConnect={() => props.handleKaikasConnect()}/>
                         )

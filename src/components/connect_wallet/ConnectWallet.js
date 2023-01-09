@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import styles from "./ConnectWallet.module.scss"
 import klayIcon from "../../assets/images/icon/icon_klay.png";
+import {store} from "../../store";
 function ConnectWallet(props) {
 
     // const [isKaikasInstalled, setKaikasInstalled] = useState(false);
@@ -24,11 +25,16 @@ function ConnectWallet(props) {
             props.handleLogout()
         }
     }
+    useEffect(() => {
+        if(store.getState().wallet.address){
+            handleKaikas();
+        }
+    },[]);
 
     return (
         <>
             <div className={styles.button_box}>
-                {props.accounts && props.accounts.length > 0 && props.isConnected === 'YES' ? (
+                {props.accounts && props.accounts.length > 0 ? (
                     <button onClick={() => confirmLogout()}
                             className={styles.wallet_button} title={props.accounts}>{shortAddress}</button>
                 ) : (
