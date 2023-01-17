@@ -1,20 +1,24 @@
-body{
+body {
     /*min-width: 1650px;*/
     /*max-width: 1920px;*/
     margin: 0 auto;
     overflow-x: hidden;
 }
-.modal-content{
+
+.modal-content {
     border-radius: 3rem;
     border: none;
 }
-.modal-90w{
+
+.modal-90w {
     width: 80%;
-    max-width: none!important;
+    max-width: none !important;
 }
-.modal-90w .container{
-    max-width: none!important;
+
+.modal-90w .container {
+    max-width: none !important;
 }
+
 /* loading modal  */
 
 .page_loader_box {
@@ -106,14 +110,101 @@ body{
     }
 }
 
-.modal-header{
+.modal-header {
     padding: 2rem;
 }
-.modal-header > button{
+
+.modal-header > button {
     position: absolute;
     right: 2rem;
 }
-.modal-content{
+
+.modal-content {
     border-radius: 3rem;
 }
+/*알림창*/
+.alert_msg{
+    font-family: 'Poppins';
+    font-weight: 700;
+    font-size: 1.8rem;
+    white-space: pre-wrap;
+}
+.alert_msg {
+    font-family: 'Poppins';
+    font-weight: 700;
+    font-size: 1.8rem;
+    white-space: pre-wrap;
 
+
+}
+.alert_box {
+    justify-content: center !important;
+}
+.mint_btn {
+    padding: 5px 10px;
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+.close_btn {
+    display: inline-block;
+    text-align: center;
+    font-family: 'Poppins';
+    font-size: 1.5rem;
+    background: #ccc;
+    color: #000;
+    border-radius: 1rem;
+    border: none;
+    padding: 5px 20px;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 16px;
+}
+
+.pagination > button {
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 0;
+    background: black;
+    color: white;
+    font-size: 1rem;
+}
+
+.pagination > button:hover {
+    background: tomato;
+    cursor: pointer;
+    transform: translateY(-2px);
+}
+
+.disabled {
+    background: grey;
+    cursor: revert;
+    transform: revert;
+}
+
+.aria-current {
+    background: deeppink;
+    font-weight: bold;
+    cursor: revert;
+    transform: revert;
+}
+
+/*상품정보 컴포넌트*/
+.item_table {
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-bottom: 2rem;
+}
+
+.item_table > th, td {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+}
+
+.item_table input {
+    width: 100%;
+}

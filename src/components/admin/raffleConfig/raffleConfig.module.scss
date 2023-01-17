@@ -1,0 +1,150 @@
+.raffle_config{
+  margin-top: 92px;
+  position: relative;
+  padding-bottom: 130px;
+  text-align: center;
+  position: relative;
+  &_title{
+    font-family: Poppins;
+    font-weight: 700;
+    font-size: 7rem;
+    padding-top: 17rem;
+    &_sub{
+      margin: 5rem 0 10rem 0;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+  }
+}
+.active_raflle_box{
+  padding-top: 10rem;
+  .content_title{
+    position: relative;
+    border-top: 2px solid #CCC;
+    margin-bottom: 10rem;
+    span{
+      position: absolute;
+      left: calc(50% - 50px);
+      top: -25px;
+      border: 2px solid #CCC;
+      padding: 10px 25px;
+      border-radius: 25px;
+      background-color: #FFFFFF;
+      font-weight: 700;
+    }
+  }
+}
+.raffle_list{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 2rem;
+  &_info{
+    width: 20%;
+    padding: 2rem;
+    text-align: center;
+    .raffle_round{
+      width: 100%;
+      max-width: 100px;
+      display: inline-block;
+      padding: 5px 20px;
+      margin-bottom: 1rem;
+      background-color: #6f42c1;
+      color: #FFF;
+      font-weight: 700;
+      border-radius: 2rem;
+    }
+    .disable{
+      background-color: #5a5a5a;
+    }
+  }
+  &_item_box{
+    width: 55%;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    padding: 3rem;
+    h3{
+      font-size: 3rem;
+      text-align: left;
+      padding-bottom: 1rem;
+    }
+  }
+  &_button_box{
+    width: 25%;
+    padding: 3rem;
+    button{
+      margin-top: 2rem;
+    }
+  }
+  &_item{
+    display: flex;
+    align-items: center;
+    text-align: left;
+    margin-bottom: 2rem;
+    &_left{
+      img{
+        width: 100px;
+        border: 1px solid #ccc;
+      }
+    }
+    &_right{
+      margin-left: 2rem;
+    }
+    &_button{
+      margin-top: 1rem;
+      margin-right: 1rem;
+      border: 1px solid #ccc;
+    }
+  }
+}
+.disable_btn{
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 2rem;
+  background: #8a8a8a;
+  color: #FFF;
+  border-radius: 2rem;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.raffle_btn {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 2rem;
+  background: #B20809;
+  color: #FFF;
+  border-radius: 2rem;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.add_btn {
+  margin-top: 3rem;
+  display: inline-block;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 2rem;
+  background: #333;
+  color: #FFF;
+  border-radius: 2rem;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  &:hover{
+    color: #FFF;
+    text-decoration: none;
+  }
+}

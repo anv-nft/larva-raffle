@@ -1,0 +1,91 @@
+.raffle_add{
+  margin-top: 92px;
+  position: relative;
+  padding-bottom: 130px;
+  text-align: center;
+  position: relative;
+  &_title{
+    font-family: Poppins;
+    font-weight: 700;
+    font-size: 7rem;
+    padding-top: 17rem;
+    &_sub{
+      margin: 5rem 0 10rem 0;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+  }
+}
+.raffle_add{
+  &_box{
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    &_title{
+      font-weight: 700;
+      text-align: left;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #000;
+      >img{
+        margin-right: 0.5rem;
+      }
+    }
+  }
+  &_input{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2rem;
+    >label{
+      text-align: center;
+      width: 100px;
+      font-weight: 700;
+    }
+    >input,textarea{
+      width: calc(100% - 100px);
+    }
+
+  }
+
+}
+.raffle_button_box{
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+}
+.disable_btn{
+  display: inline-block;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 2rem;
+  background: #8a8a8a;
+  color: #FFF;
+  border-radius: 2rem;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  &:hover{
+    color: #FFF;
+    text-decoration: none;
+  }
+}
+.raffle_btn {
+  display: inline-block;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 2rem;
+  background: #B20809;
+  color: #FFF;
+  border-radius: 2rem;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}

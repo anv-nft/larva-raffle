@@ -11,21 +11,24 @@ import {isTestNet} from "../utils/web3/networks";
 import {store} from "../store";
 import {CHANGE_ADDRESS} from "../store/actions/walletAddress";
 import MyPage from "../components/mypage/myPage";
+import Admin from "../components/admin/admin";
 import {useTranslation} from "react-i18next";
 import i18next from "../lang/i18n";
-import AOS from "aos";
-import walletAddressReducer from "../store/reducers/walletAddressReducer";
+import RaffleConfig from "../components/admin/raffleConfig/raffleConfig";
+import RaffleAdd from "../components/admin/raffleAdd/raffleAdd";
 
 function Index() {
     const {t} = useTranslation();
     const {account, active, activate, deactivate} = useWeb3React();
     const didMount = useRef(true);
-    const [accounts, setAccounts] = useState([]);
+    const [accounts, setAccounts] = useState('');
     const [apiToken, setApiToken] = useState(null);
     const [networkId, setNetworkId] = useState(1);
     // const [isConnectedWallet, setConnectWallet] = useState(undefined);
     const [language, setLanguage] = useState("ko");
     const [openedStatus, setOpenedStatus] = useState("close");
+
+    const [admin, setAdmin] = useState(false);
 
     const langChangeHandler = (lang) => {
         setLanguage(lang);
@@ -51,9 +54,16 @@ function Index() {
     function loadWalletAttributes(account, chainId) {
         let tempAccounts = [];
         tempAccounts.push(account);
-        setAccounts(tempAccounts);
+        setAccounts(account);
         store.dispatch(CHANGE_ADDRESS(account, chainId));
         setNetworkId(chainId);
+        // todo: 어드민 확인 컨트렉트 실행.
+        // todo: 컨트렉트 view 함수 호출 인자는 (kanv 컨트렉트 주소, 현재 카이카스 연결된 지갑주소)
+        console.log(account);
+        if(account == '0x05c462b4014e148ed4524a1eb3bb8cab75ec0735'){
+            setAdmin(true);
+            console.log('트루');
+        }
     }
 
     async function connectKaikas() {
@@ -62,7 +72,7 @@ function Index() {
                 await activate(kaikasConnector);
 
                 const accounts = await window.klaytn.enable();
-                const account = accounts[0]
+                const account = accounts[0];
                 if (!isTestNet) {
                     if (window.klaytn.networkVersion !== 8217) {
                         alert('Please switch your wallet to the mainnet.');
@@ -122,7 +132,8 @@ function Index() {
     async function logout() {
         window.localStorage.removeItem("aniverse_token");
         setNetworkId(undefined);
-        setAccounts([]);
+        setAccounts('');
+        setAdmin(false);
         store.dispatch(CHANGE_ADDRESS('', ''));
         try {
             await deactivate();
@@ -156,20 +167,25 @@ function Index() {
             <Header accounts={accounts} apiToken={apiToken} networkId={networkId}
                     openedStatus={openedStatus}
                     handleKaikasConnect={() => connectKaikas()} handleLogout={() => logout()}
-                    langChangeHandler={langChangeHandler} t={t} language={language}/>
+                    langChangeHandler={langChangeHandler} t={t} language={language} admin={admin}/>
             <Routes>
-                {accounts && accounts.length > 0 ? (
-                <Route exact path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
+                {(accounts && accounts.length > 0) &&
+                <Route exact={true} path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
                                                              networkId={networkId}
                                                              handleKaikasConnect={() => connectKaikas()}
-                                                             handleLogout={() => logout()}/>}>
-                </Route>
-                    ):(
-                        <></>
-                )}
-                <Route exact path="*"
-                       element={<Home t={t} accounts={accounts} apiToken={apiToken} networkId={networkId}/>}>
-                </Route>
+                                                             handleLogout={() => logout()}/>} />
+                    }
+                {admin ?(
+                    <>
+                        <Route exact={true} path="/admin" element={<Admin accounts={accounts} apiToken={apiToken}/>} />
+                        <Route exact={true} path="/admin/raffle_config" element={<RaffleConfig accounts={accounts} apiToken={apiToken}/>} />
+                        <Route exact={true} path="/admin/raffle_add" element={<RaffleAdd accounts={accounts} apiToken={apiToken}/>} />
+                        <Route exact={true} path="/admin/shipping" element={<RaffleConfig accounts={accounts} apiToken={apiToken}/>} />
+                        <Route exact={true} path="/admin/banner" element={<RaffleConfig accounts={accounts} apiToken={apiToken}/>} />
+                    </>
+                    ):(<></>)}
+                <Route exact={true} path="*"
+                       element={<Home t={t} accounts={accounts} apiToken={apiToken} networkId={networkId}/>} />
             </Routes>
             <Footer/>
         </Router>

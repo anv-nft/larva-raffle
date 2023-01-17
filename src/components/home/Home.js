@@ -3,8 +3,8 @@ import { ScrollParallax } from "react-just-parallax";
 import "swiper/swiper.scss";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import LoadingModal from "../loading_modal/LoadingModal"
-import SelectNftBoxModal from "./select_nft_box/SelectNftBoxModal";
+import LoadingModal from "../loadingModal/LoadingModal"
+import SelectNftBoxModal from "./selectNftBox/SelectNftBoxModal";
 import VisualBackground from "../../assets/images/home/back.png";
 import VisualCard01 from "../../assets/images/home/card_01.png";
 import VisualCard02 from "../../assets/images/home/card_02.png";
@@ -33,7 +33,7 @@ export default function Home(props) {
     // 지갑연결 확인
     function walletCheck() {
         console.log(props);
-        if (props.accounts[0] === undefined) {
+        if (props.accounts === undefined) {
             setAlerts("Please connect wallet.");
             setShowAlertModal(true);
             return false;
@@ -54,10 +54,8 @@ export default function Home(props) {
     });
     useEffect(() => {
         async function getCurrentRaffleList(){
-            const address = props.accounts[0];
-            await GET(`/api/v1/raffle/getCurrentRaffleList`, {
-                address,
-            }, props.apiToken).then(async (result) => {
+            const address = props.accounts;
+            await POST(`/api/v1/raffle/getCurrentRaffleList`).then(async (result) => {
                 if (result.result === 'success') {
                     setRaffleList(result.data);
                     setRaffleInfo(result.info);
@@ -71,14 +69,13 @@ export default function Home(props) {
             <section className={styles.visual_section}>
                 <img className={styles.background_img} src={VisualBackground} alt="Visual Background"/>
                 <ScrollParallax strength={0.2} lerpEase={0.06} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
-                    <img className={`${styles.visual_card} ${styles.card_01}`} src={VisualCard01} alt="Visual Background"/>
+                    <img data-aos="fade-up-left" className={`${styles.visual_card} ${styles.card_01}`} src={VisualCard01} alt="Visual Background"/>
                 </ScrollParallax>
-
                 <ScrollParallax strength={0.15} lerpEase={0.12} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
-                    <img className={`${styles.visual_card} ${styles.card_02}`} src={VisualCard02} alt="Visual Background"/>
+                    <img data-aos="zoom-in-right" data-aos-offset="600" className={`${styles.visual_card} ${styles.card_02}`} src={VisualCard02} alt="Visual Background"/>
                 </ScrollParallax>
                 <ScrollParallax strength={0.07} lerpEase={0.08} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
-                    <img className={`${styles.visual_card} ${styles.card_03}`} src={VisualCard03} alt="Visual Background"/>
+                    <img data-aos="zoom-in-left" data-aos-offset="500"  className={`${styles.visual_card} ${styles.card_03}`} src={VisualCard03} alt="Visual Background"/>
                 </ScrollParallax>
                 <div className={styles.visual_box}>
                     <h1 className={styles.visual_box_title}>
@@ -116,15 +113,15 @@ export default function Home(props) {
                             raffleList.map((item, index) => (
                                 <div key={index} className={styles.raffle_item} data-aos="flip-right">
                                     <div className={styles.raffle_item_info}>
-                                        <img src={ReffleItem01} />
+                                        <img src={item.image_url} />
                                         <h6>{item.title}</h6>
                                         <div>
                                             <label>가격</label>
-                                            <p>{item.price.toLocaleString('ko-KR')}<span>KANV</span></p>
+                                            <p>{parseInt(item.price).toLocaleString('ko-KR')}<span>KANV</span></p>
                                         </div>
                                         <div>
                                             <label>응모현황</label>
-                                            <p>{item.status.toLocaleString('ko-KR')}<span>개</span></p>
+                                            <p>{}<span>개</span></p>
                                         </div>
                                     </div>
                                     <button onClick={() => nftListOpen(item.idx)} className={styles.raffle_btn}>응모하기</button>
@@ -140,11 +137,11 @@ export default function Home(props) {
                    onHide={() => closeAlert()}>
                 <Modal.Body>
                     <div className="text-center mt-5">
-                        <p className={styles.alert_msg}> {alerts}</p>
+                        <p className="alert_msg"> {alerts}</p>
                     </div>
                 </Modal.Body>
-                <Modal.Footer className={styles.alert_box}>
-                    <button variant="" onClick={() => closeAlert()} className={styles.alert_btn}>
+                <Modal.Footer className="alert_box">
+                    <button variant="" onClick={() => closeAlert()} className="close_btn">
                         Close
                     </button>
                 </Modal.Footer>
@@ -152,7 +149,7 @@ export default function Home(props) {
             <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
             {selectBox ? (
                 <SelectNftBoxModal selectBox={selectBox} setSelectBox={setSelectBox}
-                                   userAddress={props.accounts[0]} networkId={props.networkId} apiToken={props.apiToken}
+                                   userAddress={props.accounts} networkId={props.networkId} apiToken={props.apiToken}
                                    setShowLoading={setShowLoading}/>) : (<></>)
             }
         </div>

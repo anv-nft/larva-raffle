@@ -55,8 +55,8 @@ function MyPage(props) {
         if (postUse) {
             setPostUseState(true);
         }
-        const address = props.accounts[0];
-        const res = await POST(`/api/v1/raffle/addressInfo`, {address}, props.apiToken);
+        const address = props.accounts;
+        const res = await POST(`/api/v1/raffle/address/info`, {address,productTokenId:tokenId}, props.apiToken);
         setViewForm([res.data.name, res.data.hp, res.data.zip, res.data.address, res.data.address2]);
         viewModalOpen();
     }
@@ -112,7 +112,7 @@ function MyPage(props) {
         try {
             let saveData = {
                 tokenId: nftToken,
-                ownerId: props.accounts[0],
+                ownerId: props.accounts,
                 exchangeName: formName.current.value,
                 exchangeHp: `${formPhoneNumber1.current.value}-${formPhoneNumber2.current.value}-${formPhoneNumber3.current.value}`,
             }
@@ -124,28 +124,28 @@ function MyPage(props) {
                 }
                 saveData = Object.assign(saveData, postData);
             }
-            const saveResult = await POST(`/api/v1/raffle/save`, saveData, props.apiToken);
+            const saveResult = await POST(`/api/v1/raffle/address/save`, saveData, props.apiToken);
             if (saveResult.result == 'success') {
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
                 const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, contractAddress);
                 const tokenNumber = parseInt(nftToken, 16);
                 const gasLimit = await kip17instance.methods.burn(tokenNumber).estimateGas({
-                    from: props.accounts[0],
+                    from: props.accounts,
                 })
                 const gasPrice = await caver.rpc.klay.getGasPrice();
                 const burn = await kip17instance.methods.burn(tokenNumber).send({
-                    from: props.accounts[0],
+                    from: props.accounts,
                     gas: gasLimit,
                     gasPrice,
                 }).then(async (result) => {
                     const saveTransactionData = {
                         contractAddress,
                         tokenId: nftToken,
-                        ownerId: props.accounts[0],
+                        ownerId: props.accounts,
                         transactionHash: result.transactionHash,
                     }
-                    const saveTransactionResult = await POST(`/api/v1/raffle/save/transaction`, saveTransactionData, props.apiToken);
+                    const saveTransactionResult = await POST(`/api/v1/raffle/address/save/transaction`, saveTransactionData, props.apiToken);
                     if (saveTransactionResult.result == 'success') {
                         alert('신청이 완료 되었습니다.');
                     } else {
@@ -195,8 +195,8 @@ function MyPage(props) {
 
     useEffect(() => {
         async function getMyRaffleList(){
-            const address = props.accounts[0];
-            await POST(`/api/v1/raffle/getMyRaffleList`, {
+            const address = props.accounts;
+            await POST(`/api/v1/raffle/getMyHistoryRaffle`, {
                 address,
             }, props.apiToken).then(async (result) => {
                 if (result.result === 'success') {
@@ -205,7 +205,7 @@ function MyPage(props) {
             });
         }
         getMyRaffleList();
-    }, [props.accounts[0]]);
+    }, [props.accounts]);
     return (
         <>
             <div className={styles.my_page}>
