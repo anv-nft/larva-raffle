@@ -23,8 +23,6 @@ export default function Home(props) {
 
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
     const [alerts, setAlerts] = useState(""); // 알림 메세지
-    const [raffleList, setRaffleList] = useState([]);
-    const [raffleInfo, setRaffleInfo] = useState([]);
     function closeAlert() {
         setShowAlertModal(false);
         setAlerts("");
@@ -52,18 +50,6 @@ export default function Home(props) {
             duration: 1000
         });
     });
-    useEffect(() => {
-        async function getCurrentRaffleList(){
-            const address = props.accounts;
-            await POST(`/api/v1/raffle/getCurrentRaffleList`).then(async (result) => {
-                if (result.result === 'success') {
-                    setRaffleList(result.data);
-                    setRaffleInfo(result.info);
-                }
-            });
-        }
-        getCurrentRaffleList();
-    }, []);
     return (
         <div>
             <section className={styles.visual_section}>
@@ -83,7 +69,7 @@ export default function Home(props) {
                        <span>RAFFLE EVENT</span>
                         <div className={styles.visual_box_title_img}>
                             <img src={VisualTitleBadge}/>
-                            <span>{raffleInfo.round}회차</span>
+                            <span>{props.raffleInfo.round}회차</span>
                         </div>
                     </h1>
                     <p className={styles.visual_box_text}>
@@ -95,11 +81,11 @@ export default function Home(props) {
                     <div className={styles.visual_box_date}>
                         <div>
                             <div>기간</div>
-                            <div>{raffleInfo.start_date}<br/>~ {raffleInfo.end_date}</div>
+                            <div>{props.raffleInfo.start_date}<br/>~ {props.raffleInfo.end_date}</div>
                         </div>
                         <div>
                             <div>발표</div>
-                            <div>{raffleInfo.announcement_date}</div>
+                            <div>{props.raffleInfo.announcement_date}</div>
                         </div>
                     </div>
                 </div>
@@ -110,7 +96,7 @@ export default function Home(props) {
                     <img src={ContentBackground} />
                     <div className={styles.content_box}>
                         {
-                            raffleList.map((item, index) => (
+                            props.raffleList.map((item, index) => (
                                 <div key={index} className={styles.raffle_item} data-aos="flip-right">
                                     <div className={styles.raffle_item_info}>
                                         <img src={item.image_url} />
@@ -121,7 +107,7 @@ export default function Home(props) {
                                         </div>
                                         <div>
                                             <label>응모현황</label>
-                                            <p>{}<span>개</span></p>
+                                            <p>{item.enter}<span>개</span></p>
                                         </div>
                                     </div>
                                     <button onClick={() => nftListOpen(item.idx)} className={styles.raffle_btn}>응모하기</button>

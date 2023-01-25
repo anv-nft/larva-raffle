@@ -22,17 +22,14 @@ function Header(props) {
         setMenuStatus(current => !current);
     };
     useEffect(() => {
-        console.log(props.accounts);
         console.log(props.admin);
-        if (props.accounts !== '') {
-            if (location.pathname === '/admin' || location.pathname === '/raffle_config' || location.pathname === '/shipping' || location.pathname === '/banner') {
-                if (!props.admin) {
-                    alert('관리자만 접근 가능합니다.');
-                    document.location.href = '/';
-                }
+        if (location.pathname === '/raffle_config' || location.pathname === '/shipping' || location.pathname === '/banner') {
+            if (!props.admin) {
+                alert('관리자만 접근 가능합니다.');
+                document.location.href = '/';
             }
         }
-    }, [props.accounts])
+    }, [props.admin])
     return (
         <>
             <div className={styles.header}>
@@ -41,26 +38,12 @@ function Header(props) {
                 </Link>
 
                 {
-                    (props.accounts && props.accounts.length > 0) &&
-                    <>
-                        {
-                            props.admin &&
-                            <>
-                                <Link to="/admin/raffle_config" className={styles.menu_text}>
-                                    래플관리
-                                </Link>
-                                <Link to="/admin/shipping" className={styles.menu_text}>
-                                    배송신청현황
-                                </Link>
-                                <Link to="/admin/banner" className={styles.menu_text}>
-                                    배너관리
-                                </Link>
-                            </>
-                        }
-                        <Link to="/mypage" className={styles.my_page_btn}>
-                            <img src={myPageButton}/> My Page
+                    props.admin &&
+                    <div>
+                        <Link to="/admin/raffle_config" className={styles.menu_text}>
+                            래플관리
                         </Link>
-                    </>
+                    </div>
                 }
                 {/*<div>*/}
                 {/*    {props.language === 'ko' ? (*/}
@@ -76,9 +59,18 @@ function Header(props) {
                 {/*        <a href="https://open.kakao.com/o/gCGOxhAc" target="_blank" rel="noopener noreferrer"><img src={kakaoIcon} alt="kakao link"/> {props.t('KAKAO')}</a>*/}
                 {/*    </div>*/}
                 {/*</div>*/}
-                <ConnectWallet accounts={props.accounts} apiToken={props.apiToken}
-                               networkId={props.networkId}
-                               handleKaikasConnect={() => props.handleKaikasConnect()} handleLogout={() => props.handleLogout()}/>
+                {
+                    props.admin ? (
+                    <div>
+                        <button className={styles.logout_button} onClick={() => props.adminLogout()}>Logout</button>
+                    </div>
+                    ) :(
+                        <ConnectWallet accounts={props.accounts} apiToken={props.apiToken}
+                                       networkId={props.networkId}
+                                       handleKaikasConnect={() => props.handleKaikasConnect()}
+                                       handleLogout={() => props.handleLogout()}/>
+                    )
+                }
             </div>
         </>
     )

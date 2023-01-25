@@ -1,125 +1,43 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {Modal, Button} from 'react-bootstrap';
-import styles from "./raffleConfig.module.scss";
+import styles from "./RaffleConfig.module.scss";
 import ReffleItem01 from "../../../assets/images/home/reffle_item_01.png";
 import {POST} from "../../../api/api";
-import Pagination from "../../pagination";
+import Pagination from "../../common/Pagination";
 import {Link} from "react-router-dom";
+import ShippingView from "../../common/ShippingView";
 
 function RaffleConfig(props) {
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
     const [alerts, setAlerts] = useState(""); // 알림 메세지
-    const [currentRaffleList, setCurrentRaffleList] = useState([]);
-    const [currentRaffleInfo, setCurrentRaffleInfo] = useState([]);
     const [endRaffleList, setEndRaffleList] = useState([]);
-    const [posts, setPosts] = useState([]);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
     const offset = (page - 1) * limit;
-
     function closeAlert() {
         setShowAlertModal(false);
         setAlerts("");
     }
+    const [nftTokenId, setNftTokenId] = useState(); //선택 토큰
+    const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
+    async function viewAddressFormFadeIn(tokenId, postUse) {
+        setPostUseState(postUse);
+        setNftTokenId(tokenId);
+    }
 
     useEffect(() => {
-        async function getCurrentRaffleList() {
-            const address = props.accounts;
-            await POST(`/api/v1/raffle/getCurrentRaffleList`).then(async (result) => {
+        async function getEndRaffleList() {
+            await POST(`/api/v1/raffle/getEndRaffleList`,{page},props.adminApiToken).then(async (result) => {
                 if (result.result === 'success') {
-                    setCurrentRaffleList(result.data);
-                    setCurrentRaffleInfo(result.info);
+                    setEndRaffleList(result.data);
+                    setLimit(result.limit);
+                    setTotal(result.total);
                 }
             });
         }
-
-        getCurrentRaffleList();
-        setEndRaffleList([{
-            round: 1,
-            start_date: '22.01.13 AM 00:00',
-            end_date: '22.01.15 AM 00:00',
-            item: [{
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x1',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x2',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x3',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x4',
-            }]
-        }, {
-            round: 1,
-            start_date: '22.01.13 AM 00:00',
-            end_date: '22.01.15 AM 00:00',
-            item: [{
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x1',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x2',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x3',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x4',
-            }]
-        }, {
-            round: 1,
-            start_date: '22.01.13 AM 00:00',
-            end_date: '22.01.15 AM 00:00',
-            item: [{
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x1',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x2',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x3',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x4',
-            }]
-        }, {
-            round: 1,
-            start_date: '22.01.13 AM 00:00',
-            end_date: '22.01.15 AM 00:00',
-            item: [{
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x1',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x2',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x3',
-            }, {
-                title: '에어팟 프로 (2세대)',
-                image_url: '/assets/images/home/reffle_item_01.png',
-                tokenId: '0x4',
-            }]
-        },]);
-    }, []);
+        getEndRaffleList();
+    }, [page]);
     return (
         <>
             <div className={styles.raffle_config}>
@@ -134,22 +52,22 @@ function RaffleConfig(props) {
                     </div>
                     <div className={styles.raffle_list}>
                         <div className={styles.raffle_list_info}>
-                            <div className={styles.raffle_round}>{currentRaffleInfo.round}회차</div>
+                            <div className={styles.raffle_round}>{props.raffleInfo?.round}회차</div>
                             <br/>
-                            {currentRaffleInfo.start_date}
-                            ~ {currentRaffleInfo.end_date}
+                            {props.raffleInfo?.start_date}
+                            ~ {props.raffleInfo?.end_date}
                         </div>
                         <div className={styles.raffle_list_item_box}>
                             <h3>진행상품</h3>
                             {
-                                currentRaffleList.map((item, index) => (
+                                props.raffleList?.map((item, index) => (
                                     <div key={index} className={styles.raffle_list_item}>
                                         <div className={styles.raffle_list_item_left}>
                                             <img src={item.image_url} alt="item img"/>
                                         </div>
                                         <div className={styles.raffle_list_item_right}>
                                             {item.title} : {item.price} <br/>
-                                            <button className={styles.raffle_list_item_button}>응모현황</button>
+                                            <span className={styles.raffle_list_item_span}>응모현황 : {item.enter}</span>
                                         </div>
                                     </div>
                                 ))
@@ -185,8 +103,8 @@ function RaffleConfig(props) {
                                                 </div>
                                                 <div className={styles.raffle_list_item_right}>
                                                     {item2.title}<br/>
-                                                    <button className={styles.raffle_list_item_button}>응모현황</button>
-                                                    <button className={styles.raffle_list_item_button}>배송신청현황</button>
+                                                    <span className={styles.raffle_list_item_span}>응모현황 : {item2.enter}</span>
+                                                    <button onClick={ () => viewAddressFormFadeIn(item2.tokenId, item2.is_need_address)} className={styles.raffle_list_item_button}>배송신청현황</button>
                                                     <button className={styles.raffle_list_item_button}>발송완료처리</button>
                                                 </div>
                                             </div>
@@ -202,7 +120,7 @@ function RaffleConfig(props) {
                         ))
                     }
                     <Pagination
-                        total={posts.length}
+                        total={total}
                         limit={limit}
                         page={page}
                         setPage={setPage}
@@ -223,6 +141,8 @@ function RaffleConfig(props) {
                     </button>
                 </Modal.Footer>
             </Modal>
+            {/*배송정보 확인 모달*/}
+            <ShippingView tokenId={nftTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
         </>
     )
 }

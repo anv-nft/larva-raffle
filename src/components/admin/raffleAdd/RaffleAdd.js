@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Modal, Button} from 'react-bootstrap';
-import styles from "./raffleAdd.module.scss";
+import styles from "./RaffleAdd.module.scss";
 import icon_01 from "../../../assets/images/icon/icon_01.png";
 import {POST, MAIN_URL} from "../../../api/api";
 import {Link} from "react-router-dom";
-import ItemAdd from "./itemAdd/itemAdd";
+import ItemAdd from "./itemAdd/ItemAdd";
 
 function RaffleAdd(props) {
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
@@ -70,7 +70,7 @@ function RaffleAdd(props) {
             }
             console.log(keyValue[1]);
         }
-        await POST(`/api/v1/raffle/createRaffle`, form, props.apiToken).then(async (result) => {
+        await POST(`/api/v1/raffle/createRaffle`, form, props.adminApiToken).then(async (result) => {
             if (result.result === 'success') {
                 setShowSuccessAlertModal(true);
             }
@@ -82,7 +82,7 @@ function RaffleAdd(props) {
                 <h2 className={styles.raffle_add_title}>
                     래플 신규 등록
                 </h2>
-                <form id="raffleForm" className={styles.raffle_add_box} method="post" enctype="multipart/form-data">
+                <form id="raffleForm" className={styles.raffle_add_box} method="post" encType={`multipart/form-data`}>
                     <div className={styles.raffle_add_box_title}>
                         <img src={icon_01}/>래플정보
                     </div>
@@ -127,7 +127,7 @@ function RaffleAdd(props) {
                     {Array(itemCount)
                         .fill()
                         .map((_, i) => (
-                            <ItemAdd idx={i}/>
+                            <ItemAdd idx={i} key={i}/>
                         ))
                     }
                 </form>

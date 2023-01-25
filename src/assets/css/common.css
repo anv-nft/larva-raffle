@@ -175,7 +175,7 @@ body {
 }
 
 .pagination > button:hover {
-    background: tomato;
+    background: #B20809;
     cursor: pointer;
     transform: translateY(-2px);
 }
@@ -186,8 +186,8 @@ body {
     transform: revert;
 }
 
-.aria-current {
-    background: deeppink;
+.pagination > .aria-current {
+    background: #B20809;
     font-weight: bold;
     cursor: revert;
     transform: revert;
@@ -207,4 +207,7 @@ body {
 
 .item_table input {
     width: 100%;
+}
+.item_table input[type=radio] {
+    width: auto;
 }

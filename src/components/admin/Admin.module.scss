@@ -1,0 +1,77 @@
+.admin {
+  margin-top: 92px;
+  position: relative;
+  padding-bottom: 130px;
+  text-align: center;
+  position: relative;
+  background-color: #e5e5e5;
+  &_title{
+    font-family: Poppins;
+    font-weight: 900;
+    font-size: 7rem;
+    padding-top: 17rem;
+    .point_color{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    &_sub{
+      border: 5px solid #B20809;
+      border-radius: 3rem;
+      padding: 0.5rem 2rem;
+      font-size: 3rem;
+      font-weight: 900;
+      margin-left: 2rem;
+    }
+  }
+  .login_box{
+    h2{
+      font-weight: 900;
+      margin-bottom: 3rem;
+    }
+    background-color: #FFF;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 3rem;
+    border-radius: 1rem;
+    .input_box{
+      width: 100%;
+      display: flex;
+      padding: 1rem;
+      background-color: #F4F4F4;
+      border: 1px solid #E8E8E8;
+      border-radius: 1rem;
+      label{
+        width: 30px;
+        margin-right: 0.5rem;
+      }
+      input{
+        border: 0;
+        width: 100%;
+        background-color: #F4F4F4;
+      }
+
+    }
+    button{
+      margin-top: 2rem;
+    }
+  }
+}
+.raffle_btn {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-size: 2rem;
+  background: #B20809;
+  color: #FFF;
+  border-radius: 2rem;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.point_color{
+  color: #B20809;
+}

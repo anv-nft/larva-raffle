@@ -4,7 +4,7 @@ function Pagination({ total, limit, page, setPage }) {
 
     return (
         <>
-            <nav class="pagination">
+            <nav className="pagination">
                 <button onClick={() => setPage(page - 1)} disabled={page === 1}>
                     &lt;
                 </button>
@@ -15,6 +15,7 @@ function Pagination({ total, limit, page, setPage }) {
                             key={i + 1}
                             onClick={() => setPage(i + 1)}
                             aria-current={page === i + 1 ? "page" : null}
+                            className={page === i + 1 ? 'aria-current' : ''}
                         >
                             {i + 1}
                         </button>

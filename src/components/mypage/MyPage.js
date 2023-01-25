@@ -3,10 +3,11 @@ import {Modal, Button} from 'react-bootstrap';
 import DaumPostcode from "react-daum-postcode";
 import Caver from "caver-js";
 import {POST} from "../../api/api";
-import styles from "./myPage.module.scss";
+import styles from "./MyPage.module.scss";
 import ReffleItem01 from "../../assets/images/home/reffle_item_01.png";
 import {PAUSABLE_NFT} from "../../utils/abi/PAUSABLE_NFT";
 import popIcon from "../../assets/images/icon/pop_icon.svg"
+import ShippingView from "../common/ShippingView";
 
 function MyPage(props) {
     const contractAddress = "0xa3c368148327a57d05fdeb81f1a8c8ee1884305f";
@@ -33,14 +34,7 @@ function MyPage(props) {
     const [postModalShow, setPostModalShow] = useState(false);
     const postModalClose = () => setPostModalShow(false);
     const postModalOpen = () => setPostModalShow(true);
-    // 교환정보확인 모달
-    const [viewModalShow, setViewModalShow] = useState(false);
-    const viewModalOpen = () => setViewModalShow(true);
-    const viewModalClose = () => {
-        setPostUseState(false);
-        setViewModalShow(false);
-    }
-    const [viewForm, setViewForm] = useState(['Name', 'Hp', 'Zip', 'Address', 'Address2']);
+
     const [homeAddress, setHomeAddress] = useState([]);
     function addressFormFadeIn(tokenId, postUse) {
         setNftTokenId(tokenId);
@@ -51,14 +45,8 @@ function MyPage(props) {
     }
 
     async function viewAddressFormFadeIn(tokenId, postUse) {
+        setPostUseState(postUse);
         setNftTokenId(tokenId);
-        if (postUse) {
-            setPostUseState(true);
-        }
-        const address = props.accounts;
-        const res = await POST(`/api/v1/raffle/address/info`, {address,productTokenId:tokenId}, props.apiToken);
-        setViewForm([res.data.name, res.data.hp, res.data.zip, res.data.address, res.data.address2]);
-        viewModalOpen();
     }
 
     async function addressSend(nftToken) {
@@ -346,42 +334,8 @@ function MyPage(props) {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            {/*정보확인 모달*/}
-            <Modal size="lg" show={viewModalShow} onHide={viewModalClose}>
-                <Modal.Header>
-                    <Modal.Title className="mx-auto">My Ticket 신청정보</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <div>
-                        <span className={styles.pop_title}><img src={popIcon}/> 개인정보</span>
-                        <div className={styles.pop_form}>
-                            <label>성명</label>
-                            {viewForm[0]}
-                        </div>
-                        <div className={styles.pop_form}>
-                            <label>연락처</label>
-                            {viewForm[1]}
-                        </div>
-                        {postUseState &&
-                            <div className={styles.pop_form}
-                                 style={{display: "flex", borderBottom: "3px solid #999"}}>
-                                <label>주소</label>
-                                <div style={{width: "calc(100% - 120px)"}}>
-                                    {viewForm[2]}<br/>
-                                    {viewForm[3]}<br/>
-                                    {viewForm[4]}
-                                </div>
-                            </div>
-                        }
-                        <span style={{color: "red"}}>* TokenID : #{parseInt(nftTokenId, 16)}</span><br/>
-                        <div className={styles.btnBox}>
-                            <button onClick={viewModalClose}>
-                                닫기
-                            </button>
-                        </div>
-                    </div>
-                </Modal.Body>
-            </Modal>
+            {/*배송정보 확인 모달*/}
+            <ShippingView tokenId={nftTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
         </>
     )
 }

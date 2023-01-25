@@ -10,12 +10,12 @@ import Caver from "caver-js";
 import {isTestNet} from "../utils/web3/networks";
 import {store} from "../store";
 import {CHANGE_ADDRESS} from "../store/actions/walletAddress";
-import MyPage from "../components/mypage/myPage";
-import Admin from "../components/admin/admin";
+import MyPage from "../components/mypage/MyPage";
+import Admin from "../components/admin/Admin";
 import {useTranslation} from "react-i18next";
 import i18next from "../lang/i18n";
-import RaffleConfig from "../components/admin/raffleConfig/raffleConfig";
-import RaffleAdd from "../components/admin/raffleAdd/raffleAdd";
+import RaffleConfig from "../components/admin/raffleConfig/RaffleConfig";
+import RaffleAdd from "../components/admin/raffleAdd/RaffleAdd";
 
 function Index() {
     const {t} = useTranslation();
@@ -29,6 +29,12 @@ function Index() {
     const [openedStatus, setOpenedStatus] = useState("close");
 
     const [admin, setAdmin] = useState(false);
+    const [adminId, setAdminId] = useState('');
+    const [adminPassword, setAdminPassword] = useState('');
+    const [adminApiToken, setAdminApiToken] = useState(null);
+
+    const [raffleList, setRaffleList] = useState([]);
+    const [raffleInfo, setRaffleInfo] = useState([]);
 
     const langChangeHandler = (lang) => {
         setLanguage(lang);
@@ -57,13 +63,7 @@ function Index() {
         setAccounts(account);
         store.dispatch(CHANGE_ADDRESS(account, chainId));
         setNetworkId(chainId);
-        // todo: 어드민 확인 컨트렉트 실행.
-        // todo: 컨트렉트 view 함수 호출 인자는 (kanv 컨트렉트 주소, 현재 카이카스 연결된 지갑주소)
-        console.log(account);
-        if(account == '0x05c462b4014e148ed4524a1eb3bb8cab75ec0735'){
-            setAdmin(true);
-            console.log('트루');
-        }
+
     }
 
     async function connectKaikas() {
@@ -141,6 +141,26 @@ function Index() {
             console.log(e);
         }
     }
+
+    async function adminLogin() {
+        const adminLoginCheck = await POST(`/api/v1/auth/raffle/admin/login`, {id: adminId, password: adminPassword});
+        if (adminLoginCheck.result === 'success') {
+            console.log(adminLoginCheck);
+            localStorage.setItem('aniverse_admin_token', adminLoginCheck.token);
+            setAdminApiToken(adminLoginCheck.token);
+            setAdmin(true);
+        } else {
+            alert('로그인 실패 다시 시도해주세요.')
+        }
+    }
+
+    function adminLogout() {
+        console.log('logout');
+        localStorage.setItem('aniverse_admin_token', '');
+        setAdminApiToken('');
+        setAdmin(false);
+    }
+
     useEffect(() => { // CHECK CONNECTION
         async function logoutEffect() {
             await logout();
@@ -161,31 +181,73 @@ function Index() {
             }
         }
     }, [active, account]);
+    // 어드민 검증
+    useEffect(() => {
+        const adminToken = localStorage.getItem('aniverse_admin_token');
+        if (adminToken) {
+            async function tokenCheckApi(){
+                try{
+                    await POST(`/api/v1/auth/admintokencheck`, {}, adminToken).then(async (result) => {
+                        if (result.result === 'success') {
+                            setAdminApiToken(adminToken);
+                            setAdmin(true);
+                        } else {
+                            adminLogout();
+                        }
+                    });
+                } catch (e){
+                    adminLogout();
+                }
+            }
+            if(!admin){
+                tokenCheckApi();
+            }
+        }
+    }, [admin]);
+    useEffect(() => {
+        async function getCurrentRaffleList(){
+            await POST(`/api/v1/raffle/getCurrentRaffleList`).then(async (result) => {
+                if (result.result === 'success') {
+                    setRaffleList(result.data);
+                    setRaffleInfo(result.info);
+                }
+            });
+        }
+        getCurrentRaffleList();
+    }, []);
     return (
 
         <Router>
             <Header accounts={accounts} apiToken={apiToken} networkId={networkId}
                     openedStatus={openedStatus}
                     handleKaikasConnect={() => connectKaikas()} handleLogout={() => logout()}
-                    langChangeHandler={langChangeHandler} t={t} language={language} admin={admin}/>
+                    langChangeHandler={langChangeHandler} t={t} language={language} admin={admin}
+                    adminLogout={() => adminLogout()}/>
             <Routes>
-                {(accounts && accounts.length > 0) &&
-                <Route exact={true} path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
-                                                             networkId={networkId}
-                                                             handleKaikasConnect={() => connectKaikas()}
-                                                             handleLogout={() => logout()}/>} />
-                    }
-                {admin ?(
+                <Route path="/admin"
+                       element={<Admin admin={admin} adminId={adminId} adminPassword={adminPassword}
+                                       setAdminId={setAdminId} setAdminPassword={setAdminPassword}
+                                       adminLogin={() => adminLogin()}
+                                       accounts={accounts} adminApiToken={adminApiToken} raffleList={raffleList} raffleInfo={raffleInfo}
+                       />}/>
+
+                {admin &&
                     <>
-                        <Route exact={true} path="/admin" element={<Admin accounts={accounts} apiToken={apiToken}/>} />
-                        <Route exact={true} path="/admin/raffle_config" element={<RaffleConfig accounts={accounts} apiToken={apiToken}/>} />
-                        <Route exact={true} path="/admin/raffle_add" element={<RaffleAdd accounts={accounts} apiToken={apiToken}/>} />
-                        <Route exact={true} path="/admin/shipping" element={<RaffleConfig accounts={accounts} apiToken={apiToken}/>} />
-                        <Route exact={true} path="/admin/banner" element={<RaffleConfig accounts={accounts} apiToken={apiToken}/>} />
+                        <Route path="/admin/raffle_config"
+                               element={<RaffleConfig accounts={accounts} adminApiToken={adminApiToken} raffleList={raffleList} raffleInfo={raffleInfo}/>}/>
+                        <Route path="/admin/raffle_add"
+                               element={<RaffleAdd accounts={accounts} adminApiToken={adminApiToken}/>}/>
                     </>
-                    ):(<></>)}
-                <Route exact={true} path="*"
-                       element={<Home t={t} accounts={accounts} apiToken={apiToken} networkId={networkId}/>} />
+                }
+                {(accounts && accounts.length > 0) &&
+                    <Route path="/mypage" element={<MyPage accounts={accounts} apiToken={apiToken}
+                                                           networkId={networkId}
+                                                           handleKaikasConnect={() => connectKaikas()}
+                                                           handleLogout={() => logout()}/>}/>
+                }
+
+                <Route path="*"
+                       element={<Home t={t} accounts={accounts} apiToken={apiToken} networkId={networkId} raffleList={raffleList} raffleInfo={raffleInfo}/>}/>
             </Routes>
             <Footer/>
         </Router>
