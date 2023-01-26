@@ -18,10 +18,20 @@ function RaffleAdd(props) {
     }
 
     function addItem() {
+        if(itemCount == 10){
+            setAlerts('상품은 최대 10개 까지만 등록 가능합니다.');
+            setShowAlertModal(true);
+            return false;
+        }
         setItemCount(itemCount + 1);
     }
 
     function deleteItem() {
+        if(itemCount == 1){
+            setAlerts('상품은 최소 1개 이상 있어야 합니다.');
+            setShowAlertModal(true);
+            return false;
+        }
         setItemCount(itemCount - 1);
     }
 
@@ -88,7 +98,7 @@ function RaffleAdd(props) {
                     </div>
                     <div className={styles.raffle_add_input}>
                         <label>회차</label>
-                        <input type="text" name="round"/>
+                        <input type="number" name="round"/>
                     </div>
                     <div className={styles.raffle_add_input}>
                         <label>타이틀</label>

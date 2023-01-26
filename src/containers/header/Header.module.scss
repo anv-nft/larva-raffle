@@ -70,6 +70,11 @@
   border: none;
   padding: 10px 20px;
   cursor: pointer;
+  &:hover{
+    background-color: #FFF;
+    color: #B20809;
+    border: 1px solid #B20809;
+  }
 }
 @media screen and (max-width: 830px) {
   .header {

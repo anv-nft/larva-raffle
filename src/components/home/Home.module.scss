@@ -205,6 +205,12 @@
   border: none;
   padding: 20px 0;
   cursor: pointer;
+
+  &:hover {
+    background-color: #FFF;
+    color: #B20809;
+    border: 1px solid #B20809;
+  }
 }
 
 @media screen and (max-width: 1600px) {
@@ -309,12 +315,12 @@
     }
   }
   .content_section {
+    background-color: #e5e5e5;
     .content_background {
       > img {
         display: none;
       }
     }
-
     .content_box {
       position: relative;
       align-content: center;

@@ -23,6 +23,7 @@ export default function Home(props) {
 
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
     const [alerts, setAlerts] = useState(""); // 알림 메세지
+    const [item, setItem] = useState(null); // 알림 메세지
     function closeAlert() {
         setShowAlertModal(false);
         setAlerts("");
@@ -30,8 +31,7 @@ export default function Home(props) {
 
     // 지갑연결 확인
     function walletCheck() {
-        console.log(props);
-        if (props.accounts === undefined) {
+        if (props.accounts === '') {
             setAlerts("Please connect wallet.");
             setShowAlertModal(true);
             return false;
@@ -39,10 +39,11 @@ export default function Home(props) {
         return true;
     }
     // nft 리스트 출력
-    function nftListOpen(idx) {
+    function nftListOpen(item) {
         if (!walletCheck()) {
             return false;
         }
+        setItem(item);
         setSelectBox(true);
     }
     useEffect(() => {
@@ -110,7 +111,7 @@ export default function Home(props) {
                                             <p>{item.enter}<span>개</span></p>
                                         </div>
                                     </div>
-                                    <button onClick={() => nftListOpen(item.idx)} className={styles.raffle_btn}>응모하기</button>
+                                    <button onClick={() => nftListOpen(item)} className={styles.raffle_btn}>응모하기</button>
                                 </div>
                             ))
                         }
@@ -133,10 +134,10 @@ export default function Home(props) {
                 </Modal.Footer>
             </Modal>
             <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
-            {selectBox ? (
-                <SelectNftBoxModal selectBox={selectBox} setSelectBox={setSelectBox}
+            {selectBox &&
+                <SelectNftBoxModal selectBox={selectBox} setSelectBox={setSelectBox} setAlerts={setAlerts} setShowAlertModal={setShowAlertModal}
                                    userAddress={props.accounts} networkId={props.networkId} apiToken={props.apiToken}
-                                   setShowLoading={setShowLoading}/>) : (<></>)
+                                   setShowLoading={setShowLoading} raffleInfo={props.raffleInfo} item={item}/>
             }
         </div>
     );

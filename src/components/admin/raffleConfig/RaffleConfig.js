@@ -21,11 +21,56 @@ function RaffleConfig(props) {
     }
     const [nftTokenId, setNftTokenId] = useState(); //선택 토큰
     const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
+    const [shippingView, setShippingView] = useState(false);
     async function viewAddressFormFadeIn(tokenId, postUse) {
         setPostUseState(postUse);
         setNftTokenId(tokenId);
+        setShippingView(true);
     }
+    // 래플마감
+    async function raffleEnd(round){
+        try{
+            const result = await POST(`/api/v1/raffle/end`,{round},props.adminApiToken);
+            if (result.result === 'success') {
+                setAlerts(`${round}회차 래플이 마감되었습니다.`);
+                setShowAlertModal(true);
+            }
+        } catch (e){
+            console.log(e);
+            setAlerts(`${round}회차 래플 마감 처리를 실패하였습니다.\n다시 시도해주세요.`);
+            setShowAlertModal(true);
+        }
+    }
+    // 래플 취소
+    async function raffleCancel(round){
+        try{
+            const result = await POST(`/api/v1/raffle/cancel`,{round},props.adminApiToken);
+            if (result.result === 'success') {
+                setAlerts(`${round}회차 래플이 취소되었습니다.`);
+                setShowAlertModal(true);
+            }
+        } catch (e){
+            console.log(e);
+            setAlerts(`${round}회차 래플 취소처리를 실패하였습니다.\n다시 시도해주세요.`);
+            setShowAlertModal(true);
+        }
+    }
+    // 발송완료 처리
+    async function raffleItemShippingEnd(round, item){
+        try{
+            const tokenId = item.tokenId;
+            const result = await POST(`/api/v1/raffle/shipping/end`,{tokenId},props.adminApiToken);
+            if (result.result === 'success') {
+                setAlerts(`${round}회차 ${item.title}이 발송완료 처리되었습니다.`);
+                setShowAlertModal(true);
+            }
+        } catch (e){
+            console.log(e);
+            setAlerts(`${round}회차 [${item.title}] 발송완료 처리를 실패하였습니다.\n다시 시도해주세요.`);
+            setShowAlertModal(true);
+        }
 
+    }
     useEffect(() => {
         async function getEndRaffleList() {
             await POST(`/api/v1/raffle/getEndRaffleList`,{page},props.adminApiToken).then(async (result) => {
@@ -74,8 +119,8 @@ function RaffleConfig(props) {
                             }
                         </div>
                         <div className={styles.raffle_list_button_box}>
-                            <button className={styles.raffle_btn}>래플 마감</button>
-                            <button className={styles.disable_btn}>래플 취소</button>
+                            <button onClick={()=> raffleEnd(props.raffleInfo?.round)} className={styles.raffle_btn}>래플 마감</button>
+                            <button onClick={()=> raffleCancel(props.raffleInfo?.round)} className={styles.disable_btn}>래플 취소</button>
                         </div>
                     </div>
                 </div>
@@ -105,7 +150,7 @@ function RaffleConfig(props) {
                                                     {item2.title}<br/>
                                                     <span className={styles.raffle_list_item_span}>응모현황 : {item2.enter}</span>
                                                     <button onClick={ () => viewAddressFormFadeIn(item2.tokenId, item2.is_need_address)} className={styles.raffle_list_item_button}>배송신청현황</button>
-                                                    <button className={styles.raffle_list_item_button}>발송완료처리</button>
+                                                    <button onClick={() => raffleItemShippingEnd(item.round, item2)} className={styles.raffle_list_item_button}>발송완료처리</button>
                                                 </div>
                                             </div>
 
@@ -142,7 +187,7 @@ function RaffleConfig(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView tokenId={nftTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} tokenId={nftTokenId} postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
         </>
     )
 }

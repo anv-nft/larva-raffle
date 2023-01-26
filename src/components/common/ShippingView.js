@@ -4,13 +4,14 @@ import popIcon from "../../assets/images/icon/pop_icon.svg";
 import React, {useEffect, useState} from "react";
 import {POST} from "../../api/api";
 
-function ShippingView({tokenId, setNftTokenId, postUse, apiToken, address,  }) {
+function ShippingView({shippingView, setShippingView,tokenId, setNftTokenId, postUse, apiToken, address,  }) {
     const [viewForm, setViewForm] = useState(['Name', 'Hp', 'Zip', 'Address', 'Address2']);
     // 교환정보확인 모달
     const [viewModalShow, setViewModalShow] = useState(false);
     const viewModalOpen = () => setViewModalShow(true);
     const viewModalClose = () => {
         setViewModalShow(false);
+        setShippingView(false);
         setNftTokenId()
     }
     useEffect(() => {
@@ -24,7 +25,7 @@ function ShippingView({tokenId, setNftTokenId, postUse, apiToken, address,  }) {
             viewAddressFormFadeIn(tokenId);
         }
 
-    },[tokenId])
+    },[shippingView])
     return (
         <>
             {/*배송정보 확인 모달*/}

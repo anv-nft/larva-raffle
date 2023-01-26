@@ -43,10 +43,11 @@ function MyPage(props) {
         }
         modalOpen();
     }
-
+    const [shippingView, setShippingView] = useState(false);
     async function viewAddressFormFadeIn(tokenId, postUse) {
         setPostUseState(postUse);
         setNftTokenId(tokenId);
+        setShippingView(true);
     }
 
     async function addressSend(nftToken) {
@@ -335,7 +336,7 @@ function MyPage(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView tokenId={nftTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} tokenId={nftTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
         </>
     )
 }
