@@ -42,7 +42,7 @@ function ConnectWallet(props) {
                 {props.accounts && props.accounts.length > 0 ? (
                     <>
                         <Link to="/mypage" className={styles.my_page_btn}>
-                            <img src={myPageButton}/> My Page
+                            <img src={myPageButton} alt={"my page icon"}/> My Page
                         </Link>
                         <button onClick={() => confirmLogout()}
                                 className={styles.wallet_button} title={props.accounts}>{shortAddress}</button>

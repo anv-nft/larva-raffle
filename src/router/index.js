@@ -26,7 +26,6 @@ function Index() {
     const [networkId, setNetworkId] = useState(1);
     // const [isConnectedWallet, setConnectWallet] = useState(undefined);
     const [language, setLanguage] = useState("ko");
-    const [openedStatus, setOpenedStatus] = useState("close");
 
     const [admin, setAdmin] = useState(false);
     const [adminId, setAdminId] = useState('');
@@ -76,7 +75,7 @@ function Index() {
                 if (!isTestNet) {
                     if (window.klaytn.networkVersion !== 8217) {
                         alert('Please switch your wallet to the mainnet.');
-                        throw 'error';
+                        throw new Error('Please switch your wallet to the mainnet');
                     }
                 }
 
@@ -143,6 +142,15 @@ function Index() {
     }
 
     async function adminLogin() {
+        console.log(adminId)
+        if(adminId === ''){
+            alert('아이디를 입력해주세요.');
+            return false;
+        }
+        if(adminPassword === ''){
+            alert('패스워드를 입력해주세요.');
+            return false;
+        }
         const adminLoginCheck = await POST(`/api/v1/auth/raffle/admin/login`, {id: adminId, password: adminPassword});
         if (adminLoginCheck.result === 'success') {
             console.log(adminLoginCheck);
@@ -219,7 +227,6 @@ function Index() {
 
         <Router>
             <Header accounts={accounts} apiToken={apiToken} networkId={networkId}
-                    openedStatus={openedStatus}
                     handleKaikasConnect={() => connectKaikas()} handleLogout={() => logout()}
                     langChangeHandler={langChangeHandler} t={t} language={language} admin={admin}
                     adminLogout={() => adminLogout()}/>

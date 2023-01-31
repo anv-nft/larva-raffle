@@ -1,9 +1,7 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import App from './App';
-/* REDUX AND STORE IT TO LOCALSTORAGE */
 import { store } from './store'
-// import { Provider }  from 'react-redux'
 import { saveState } from './store/localStorage'
 import { throttle } from 'lodash';
 import { Web3ReactProvider } from "@web3-react/core";

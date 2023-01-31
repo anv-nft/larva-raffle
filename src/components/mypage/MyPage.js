@@ -57,7 +57,7 @@ function MyPage(props) {
             return agreeBox.current.focus();
         }
         const regName = /^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
-        if (formName.current.value == "") {
+        if (formName.current.value === "") {
             alert("성명을 입력해주세요.");
             return formName.current.focus();
         }
@@ -66,11 +66,11 @@ function MyPage(props) {
             return formName.current.focus();
         }
 
-        if (formPhoneNumber1.current.value == "") {
+        if (formPhoneNumber1.current.value === "") {
             alert("연락처 앞자리를 선택해주세요.");
             return formPhoneNumber1.current.focus();
         }
-        if (formPhoneNumber2.current.value == "") {
+        if (formPhoneNumber2.current.value === "") {
             alert("연락처를 입력해주세요.");
             return formPhoneNumber2.current.focus();
         }
@@ -79,7 +79,7 @@ function MyPage(props) {
             alert("숫자 3~4자리를 입력해주세요.");
             return formPhoneNumber2.current.focus();
         }
-        if (formPhoneNumber3.current.value == "") {
+        if (formPhoneNumber3.current.value === "") {
             alert("연락처를 입력해주세요.");
             return formPhoneNumber3.current.focus();
         }
@@ -89,11 +89,11 @@ function MyPage(props) {
             return formPhoneNumber3.current.focus();
         }
         if (postUseState) {
-            if (formPostZip.current.value == "" || formPostAddress.current.value == "") {
+            if (formPostZip.current.value === "" || formPostAddress.current.value === "") {
                 alert("주소를 입력해주세요.");
                 return formPostZip.current.focus();
             }
-            if (formPostAddress2.current.value == "") {
+            if (formPostAddress2.current.value === "") {
                 alert("상세주소를 입력해주세요.");
                 return formPostAddress2.current.focus();
             }
@@ -114,7 +114,8 @@ function MyPage(props) {
                 saveData = Object.assign(saveData, postData);
             }
             const saveResult = await POST(`/api/v1/raffle/address/save`, saveData, props.apiToken);
-            if (saveResult.result == 'success') {
+            if (saveResult.result === 'success') {
+                // todo : 배송완료 프로세스 마무리
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
                 const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, contractAddress);
@@ -135,7 +136,7 @@ function MyPage(props) {
                         transactionHash: result.transactionHash,
                     }
                     const saveTransactionResult = await POST(`/api/v1/raffle/address/save/transaction`, saveTransactionData, props.apiToken);
-                    if (saveTransactionResult.result == 'success') {
+                    if (saveTransactionResult.result === 'success') {
                         alert('신청이 완료 되었습니다.');
                     } else {
                         alert('신청중 오류가 발생하였습니다.');
@@ -194,7 +195,7 @@ function MyPage(props) {
             });
         }
         getMyRaffleList();
-    }, [props.accounts]);
+    }, [props.accounts, props.apiToken]);
     return (
         <>
             <div className={styles.my_page}>
@@ -207,7 +208,7 @@ function MyPage(props) {
                         myRaffleList.map((item, index) => (
                             <div key={index} className={styles.raffle_item}>
                                 <div className={styles.left}>
-                                    <img src={ReffleItem01}/>
+                                    <img src={ReffleItem01} alt={`${item.title} img`}/>
                                     <div className={styles.raffle_info}>
                                         <div>
                                             <span>{item.round}회차</span> {item.round_date}
@@ -249,7 +250,7 @@ function MyPage(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <div className={styles.term_box}>
-                        <span className={styles.pop_title}><img src={popIcon}/> 개인정보수집약관</span>
+                        <span className={styles.pop_title}><img src={popIcon} alt={"paper icon"}/> 개인정보수집약관</span>
                         <p className={styles.term_text}>
                             개인 정보 수집·이용 동의<br/>
                             <br/>
@@ -269,7 +270,7 @@ function MyPage(props) {
                         /> 위 약관에 동의합니다.
                     </div>
                     <div>
-                        <span className={styles.pop_title}><img src={popIcon}/> 개인정보</span>
+                        <span className={styles.pop_title}><img src={popIcon} alt={"paper icon"}/> 개인정보</span>
                         <form>
                             <div className={styles.pop_form}>
                                 <label>성명</label>
@@ -296,7 +297,7 @@ function MyPage(props) {
                                      style={{display: "flex", borderBottom: "3px solid #999"}}>
                                     <label>주소</label>
                                     <div style={{width: "calc(100% - 120px)"}}>
-                                        <a onClick={postModalOpen}>주소검색</a>
+                                        <button onClick={postModalOpen}>주소검색</button>
                                         <input ref={formPostZip} type="text" name={"post"} value={homeAddress[0] || ''}
                                                placeholder="우편번호"
                                                readOnly/><br/>

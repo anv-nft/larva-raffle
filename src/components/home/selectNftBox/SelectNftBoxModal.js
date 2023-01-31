@@ -31,23 +31,6 @@ function SelectNftBoxModal(props) {
         box.classList.add(styles.active);
     }
 
-    function selectComplete() {
-        // if (props.selectSequence === 1) {
-        //     props.setFirstToken({
-        //         id: selectedNft.childNodes[1].childNodes[1].innerText,
-        //         img: selectedNft.childNodes[0].src,
-        //         character: selectedNft.childNodes[2].innerText,
-        //     });
-        // } else {
-        //     props.setSecondToken({
-        //         id: selectedNft.childNodes[1].childNodes[1].innerText,
-        //         img: selectedNft.childNodes[0].src,
-        //         character: selectedNft.childNodes[2].innerText,
-        //     });
-        //
-        // }
-        // props.setSelectBox(false);
-    }
 // KANV에 대한 어프로브 확인
     async function approveCheck(itemPrice) {
         const approveAmount = await kanvContract.methods.allowance(props.userAddress, RAFFLE_CONTRACT_ADDRESS).call().then(e => {
@@ -134,12 +117,17 @@ function SelectNftBoxModal(props) {
                     setListItem(nftList);
                     setSelectModal(true);
                 }
+            }).catch((e)=>{
+                console.log(e);
+                props.setAlerts("Get NFT Fail ");
+                props.setShowAlertModal(true);
+                props.setSelectBox(false);
             });
             props.setShowLoading(false);
         }
 
         getNft();
-    }, [props.selectBox]);
+    }, []);
     return (
         <Modal id={styles.myNftBox} centered size="xs" show={selectModal}
                onHide={() => props.setSelectBox(false)}>

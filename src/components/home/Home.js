@@ -1,4 +1,4 @@
-import React, {useState, useEffect,useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import { ScrollParallax } from "react-just-parallax";
 import "swiper/swiper.scss";
 import AOS from "aos";
@@ -10,12 +10,9 @@ import VisualCard01 from "../../assets/images/home/card_01.png";
 import VisualCard02 from "../../assets/images/home/card_02.png";
 import VisualCard03 from "../../assets/images/home/card_03.png";
 import VisualTitleBadge from "../../assets/images/home/title_badge.png";
-// import VisualCharacter from "../../assets/images/home/home_visual_character.png";
 import ContentBackground from "../../assets/images/home/back_mid_01.png";
-import ReffleItem01 from "../../assets/images/home/reffle_item_01.png";
 import styles from "./Home.module.scss";
 import {Modal} from "react-bootstrap";
-import {POST, GET} from "../../api/api";
 
 export default function Home(props) {
     const [showLoading, setShowLoading] = useState(false); // 로딩 모달
@@ -69,7 +66,7 @@ export default function Home(props) {
                        LARVA NFT<br/>
                        <span>RAFFLE EVENT</span>
                         <div className={styles.visual_box_title_img}>
-                            <img src={VisualTitleBadge}/>
+                            <img src={VisualTitleBadge} alt={"badge img"}/>
                             <span>{props.raffleInfo.round}회차</span>
                         </div>
                     </h1>
@@ -94,13 +91,13 @@ export default function Home(props) {
             <section className={styles.content_section}>
                 <h2 className={styles.content_title}>LARVA NFT RAFFLE</h2>
                 <div className={styles.content_background}>
-                    <img src={ContentBackground} />
+                    <img src={ContentBackground} alt={"content background img"}/>
                     <div className={styles.content_box}>
                         {
                             props.raffleList.map((item, index) => (
                                 <div key={index} className={styles.raffle_item} data-aos="flip-right">
                                     <div className={styles.raffle_item_info}>
-                                        <img src={item.image_url} />
+                                        <img src={item.image_url} alt={`${item.title} img`} />
                                         <h6>{item.title}</h6>
                                         <div>
                                             <label>가격</label>

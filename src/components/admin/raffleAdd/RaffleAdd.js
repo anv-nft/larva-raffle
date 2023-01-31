@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Modal, Button} from 'react-bootstrap';
+import React, { useState} from 'react';
+import {Modal} from 'react-bootstrap';
 import styles from "./RaffleAdd.module.scss";
 import icon_01 from "../../../assets/images/icon/icon_01.png";
-import {POST, MAIN_URL} from "../../../api/api";
+import {POST} from "../../../api/api";
 import {Link} from "react-router-dom";
 import ItemAdd from "./itemAdd/ItemAdd";
 
@@ -18,7 +18,7 @@ function RaffleAdd(props) {
     }
 
     function addItem() {
-        if(itemCount == 10){
+        if(itemCount === 10){
             setAlerts('상품은 최대 10개 까지만 등록 가능합니다.');
             setShowAlertModal(true);
             return false;
@@ -27,7 +27,7 @@ function RaffleAdd(props) {
     }
 
     function deleteItem() {
-        if(itemCount == 1){
+        if(itemCount === 1){
             setAlerts('상품은 최소 1개 이상 있어야 합니다.');
             setShowAlertModal(true);
             return false;
@@ -73,6 +73,8 @@ function RaffleAdd(props) {
                     case "itemImage[]":
                         inputName = "상품이미지";
                         break;
+                    default:
+                        inputName = "상품정보";
                 }
                 setAlerts(`${inputName}를(을) 입력해주세요.`);
                 setShowAlertModal(true);
@@ -94,7 +96,7 @@ function RaffleAdd(props) {
                 </h2>
                 <form id="raffleForm" className={styles.raffle_add_box} method="post" encType={`multipart/form-data`}>
                     <div className={styles.raffle_add_box_title}>
-                        <img src={icon_01}/>래플정보
+                        <img src={icon_01} alt={'info_icon'}/>래플정보
                     </div>
                     <div className={styles.raffle_add_input}>
                         <label>회차</label>
@@ -125,7 +127,7 @@ function RaffleAdd(props) {
                         <textarea name="description"/>
                     </div>
                     <div className={styles.raffle_add_box_title}>
-                        <img src={icon_01}/>상품정보
+                        <img src={icon_01} alt={'info_icon'}/>상품정보
                         <button className={styles.add_btn} type={"button"} onClick={() => {
                             addItem()
                         }}> 상품추가</button>

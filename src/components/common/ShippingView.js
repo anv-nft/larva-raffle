@@ -35,7 +35,7 @@ function ShippingView({shippingView, setShippingView,tokenId, setNftTokenId, pos
                 </Modal.Header>
                 <Modal.Body>
                     <div>
-                        <span className={styles.pop_title}><img src={popIcon}/> 개인정보</span>
+                        <span className={styles.pop_title}><img src={popIcon} alt={"paper icon"}/> 개인정보</span>
                         <div className={styles.pop_form}>
                             <label>성명</label>
                             {viewForm[0]}
