@@ -4,7 +4,7 @@ import popIcon from "../../assets/images/icon/pop_icon.svg";
 import React, {useEffect, useState} from "react";
 import {POST} from "../../api/api";
 
-function ShippingView({shippingView, setShippingView,tokenId, setNftTokenId, postUse, apiToken, address,  }) {
+function ShippingView({shippingView, setShippingView,productTokenId, setNftTokenId, postUse, apiToken, address,  }) {
     const [viewForm, setViewForm] = useState(['Name', 'Hp', 'Zip', 'Address', 'Address2']);
     // 교환정보확인 모달
     const [viewModalShow, setViewModalShow] = useState(false);
@@ -15,14 +15,14 @@ function ShippingView({shippingView, setShippingView,tokenId, setNftTokenId, pos
         setNftTokenId()
     }
     useEffect(() => {
-        if(tokenId){
-            async function viewAddressFormFadeIn(tokenId) {
-                const res = await POST(`/api/v1/raffle/address/info`, {address,productTokenId:tokenId}, apiToken);
+        if(productTokenId){
+            async function viewAddressFormFadeIn(productTokenId) {
+                const res = await POST(`/api/v1/raffle/address/info`, {address,productTokenId}, apiToken);
                 console.log(res);
                 setViewForm([res.data?.name, res.data?.hp, res.data?.zip, res.data?.address, res.data?.address2]);
                 viewModalOpen();
             }
-            viewAddressFormFadeIn(tokenId);
+            viewAddressFormFadeIn(productTokenId);
         }
 
     },[shippingView])
@@ -55,7 +55,7 @@ function ShippingView({shippingView, setShippingView,tokenId, setNftTokenId, pos
                                 </div>
                             </div>
                         }
-                        <span style={{color: "red"}}>* TokenID : #{parseInt(tokenId, 16)}</span><br/>
+                        <span style={{color: "red"}}>* TokenID : #{parseInt(productTokenId, 16)}</span><br/>
                         <div className={styles.btnBox}>
                             <button onClick={viewModalClose}>
                                 닫기

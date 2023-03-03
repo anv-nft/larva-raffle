@@ -6,13 +6,19 @@ import {POST} from "../../api/api";
 import styles from "./MyPage.module.scss";
 import ReffleItem01 from "../../assets/images/home/reffle_item_01.png";
 import {PAUSABLE_NFT} from "../../utils/abi/PAUSABLE_NFT";
+import {contracts} from "../../utils/web3/contracts";
 import popIcon from "../../assets/images/icon/pop_icon.svg"
 import ShippingView from "../common/ShippingView";
+import Pagination from "../common/Pagination";
 
 function MyPage(props) {
+    const RAFFLE_NFT_CONTRACT_ADDRESS = contracts['raffle_nft_contract'][props.networkId];
     const contractAddress = "0xa3c368148327a57d05fdeb81f1a8c8ee1884305f";
     const [myRaffleList, setMyRaffleList] = useState([]);
-    const [nftTokenId, setNftTokenId] = useState(); //선택 토큰
+    const [productTokenId, setProductTokenId] = useState(); //선택한 상품
+    const [limit, setLimit] = useState(10);
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
     // 교환정보 입력 모달
     const [modalShow, setModalShow] = useState(false);
     const modalClose = () => {
@@ -37,7 +43,7 @@ function MyPage(props) {
 
     const [homeAddress, setHomeAddress] = useState([]);
     function addressFormFadeIn(tokenId, postUse) {
-        setNftTokenId(tokenId);
+        setProductTokenId(tokenId);
         if (postUse) {
             setPostUseState(true);
         }
@@ -46,7 +52,7 @@ function MyPage(props) {
     const [shippingView, setShippingView] = useState(false);
     async function viewAddressFormFadeIn(tokenId, postUse) {
         setPostUseState(postUse);
-        setNftTokenId(tokenId);
+        setProductTokenId(tokenId);
         setShippingView(true);
     }
 
@@ -118,13 +124,13 @@ function MyPage(props) {
                 // todo : 배송완료 프로세스 마무리
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
-                const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, contractAddress);
+                const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, RAFFLE_NFT_CONTRACT_ADDRESS);
                 const tokenNumber = parseInt(nftToken, 16);
                 const gasLimit = await kip17instance.methods.burn(tokenNumber).estimateGas({
                     from: props.accounts,
                 })
                 const gasPrice = await caver.rpc.klay.getGasPrice();
-                const burn = await kip17instance.methods.burn(tokenNumber).send({
+                await kip17instance.methods.burn(tokenNumber).send({
                     from: props.accounts,
                     gas: gasLimit,
                     gasPrice,
@@ -188,14 +194,17 @@ function MyPage(props) {
             const address = props.accounts;
             await POST(`/api/v1/raffle/getMyHistoryRaffle`, {
                 address,
+                page,
+                limit,
             }, props.apiToken).then(async (result) => {
                 if (result.result === 'success') {
                     setMyRaffleList(result.data);
+                    setTotal(result.total);
                 }
             });
         }
         getMyRaffleList();
-    }, [props.accounts, props.apiToken]);
+    }, [props.accounts, props.apiToken,page]);
     return (
         <>
             <div className={styles.my_page}>
@@ -219,6 +228,7 @@ function MyPage(props) {
                                 </div>
                                 <div className={styles.right}>
                                     <div className={styles.raffle_status}>
+                                        응모NFT : {parseInt(item.tokenId, 16)}<br/>
                                         {item.prize ? (
                                             "당첨"
                                         ) : (
@@ -244,6 +254,12 @@ function MyPage(props) {
                     }
                 </div>
             </div>
+            <Pagination
+                total={total}
+                limit={limit}
+                page={page}
+                setPage={setPage}
+            />
             <Modal size="lg" show={modalShow} onHide={modalClose}>
                 <Modal.Header>
                     <Modal.Title className="mx-auto">My Ticket 신청하기</Modal.Title>
@@ -297,7 +313,7 @@ function MyPage(props) {
                                      style={{display: "flex", borderBottom: "3px solid #999"}}>
                                     <label>주소</label>
                                     <div style={{width: "calc(100% - 120px)"}}>
-                                        <button onClick={postModalOpen}>주소검색</button>
+                                        <button type={"button"} onClick={postModalOpen}>주소검색</button>
                                         <input ref={formPostZip} type="text" name={"post"} value={homeAddress[0] || ''}
                                                placeholder="우편번호"
                                                readOnly/><br/>
@@ -311,13 +327,13 @@ function MyPage(props) {
                             }
                         </form>
                         <span style={{color: "red"}}>* 신청이 완료되면 보유한 NFT는 소각 처리됩니다.</span><br/>
-                        <span style={{color: "red"}}>* TokenID : #{parseInt(nftTokenId, 16)}</span><br/>
+                        <span style={{color: "red"}}>* TokenID : #{parseInt(productTokenId, 16)}</span><br/>
                         <div className={styles.btnBox}>
                             <button onClick={modalClose}>
                                 취소
                             </button>
                             <button onClick={() => {
-                                addressSend(nftTokenId)
+                                addressSend(productTokenId)
                             }}>
                                 제출
                             </button>
@@ -326,7 +342,7 @@ function MyPage(props) {
                 </Modal.Body>
             </Modal>
             {/*주소 모달*/}
-            <Modal show={postModalShow} onHide={postModalClose}>
+            <Modal show={postModalShow} onHide={postModalClose} className={"postModal"}>
                 <DaumPostcode style={postCodeStyle} onComplete={handlePostCode}/>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => {
@@ -337,7 +353,7 @@ function MyPage(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView shippingView={shippingView} setShippingView={setShippingView} tokenId={nftTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setProductTokenId}/>
         </>
     )
 }

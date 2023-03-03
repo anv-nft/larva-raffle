@@ -18,12 +18,12 @@ function RaffleConfig(props) {
         setShowAlertModal(false);
         setAlerts("");
     }
-    const [nftTokenId, setNftTokenId] = useState(); //선택 토큰
+    const [productTokenId, setProductTokenId] = useState(); //선택 토큰
     const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
     const [shippingView, setShippingView] = useState(false);
     async function viewAddressFormFadeIn(tokenId, postUse) {
         setPostUseState(postUse);
-        setNftTokenId(tokenId);
+        setProductTokenId(tokenId);
         setShippingView(true);
     }
     // 래플마감
@@ -77,7 +77,7 @@ function RaffleConfig(props) {
     }
     useEffect(() => {
         async function getEndRaffleList() {
-            await POST(`/api/v1/raffle/getEndRaffleList`,{page},props.adminApiToken).then(async (result) => {
+            await POST(`/api/v1/raffle/getEndRaffleList`,{page,limit},props.adminApiToken).then(async (result) => {
                 if (result.result === 'success') {
                     setEndRaffleList(result.data);
                     setLimit(result.limit);
@@ -195,7 +195,7 @@ function RaffleConfig(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView shippingView={shippingView} setShippingView={setShippingView} tokenId={nftTokenId} postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts} setNftTokenId={setNftTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts} setNftTokenId={setProductTokenId}/>
         </>
     )
 }

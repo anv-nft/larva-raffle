@@ -211,3 +211,8 @@ body {
 .item_table input[type=radio] {
     width: auto;
 }
+
+
+.postModal>.modal-dialog{
+    border: 2px solid #aaa;
+}
