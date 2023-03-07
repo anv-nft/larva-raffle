@@ -1,6 +1,111 @@
 const RAFFLE = [{
     "anonymous": false,
     "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "address", "name": "ticketAddr", "type": "address"}, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "round",
+        "type": "uint256"
+    }],
+    "name": "AddedAvailableNFT",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "NFTId",
+        "type": "uint256"
+    }, {"indexed": false, "internalType": "uint256", "name": "price", "type": "uint256"}],
+    "name": "AddedItem",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}],
+    "name": "CanceledRaffle",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}],
+    "name": "CompletedRaffle",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "address", "name": "admin", "type": "address"}, {
+        "indexed": false,
+        "internalType": "address",
+        "name": "productAddr",
+        "type": "address"
+    }],
+    "name": "CreatedShop",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{"indexed": false, "internalType": "address", "name": "fungibleToken", "type": "address"}],
+    "name": "DestroyedShop",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{"indexed": false, "internalType": "address", "name": "joiner", "type": "address"}, {
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "selectedItem",
+        "type": "uint256"
+    }, {"indexed": false, "internalType": "address", "name": "addrOfNFT", "type": "address"}, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "userNFT",
+        "type": "uint256"
+    }],
+    "name": "JoinedRaffle",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "itemNumber",
+        "type": "uint256"
+    }, {"indexed": false, "internalType": "address", "name": "winner", "type": "address"}],
+    "name": "LuckyDrawed",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -10,138 +115,63 @@ const RAFFLE = [{
     "type": "event"
 }, {
     "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{
         "indexed": false,
-        "internalType": "uint256",
-        "name": "round",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "address", "name": "admin", "type": "address"}, {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
     }],
+    "name": "SettedAdmin",
+    "type": "event"
+}, {
+    "anonymous": false,
+    "inputs": [{
+        "indexed": false,
+        "internalType": "address",
+        "name": "fungibleToken",
+        "type": "address"
+    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}],
     "name": "StartedRaffle",
     "type": "event"
 }, {
     "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{
         "indexed": false,
         "internalType": "address",
-        "name": "_NFT",
+        "name": "fungibleToken",
         "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}],
-    "name": "addedAvailableNFT",
+    }, {"indexed": false, "internalType": "address", "name": "ticketAddr", "type": "address"}, {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "stratBlock",
+        "type": "uint256"
+    }, {"indexed": false, "internalType": "uint256", "name": "endBlock", "type": "uint256"}],
+    "name": "boxCreated",
     "type": "event"
 }, {
     "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{
         "indexed": false,
         "internalType": "address",
-        "name": "_NFT",
-        "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_NFTId",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "uint256", "name": "_price", "type": "uint256"}],
-    "name": "addedItem",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "round",
-        "type": "uint256"
-    }],
-    "name": "canceledRaffle",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "round",
-        "type": "uint256"
-    }],
-    "name": "completedRaffle",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "joiner", "type": "address"}, {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_FT",
+        "name": "fungibleToken",
         "type": "address"
     }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
         "indexed": false,
         "internalType": "uint256",
-        "name": "selectedItem",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "address", "name": "NFTAddress", "type": "address"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "userNFT",
-        "type": "uint256"
-    }],
-    "name": "joinedRaffle",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "round",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "uint256", "name": "itemNumber", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "address",
-        "name": "winner",
-        "type": "address"
-    }],
-    "name": "luckyDrawed",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_NFT",
-        "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "stratTime",
-        "type": "uint256"
-    }, {"indexed": false, "internalType": "uint256", "name": "endTime", "type": "uint256"}],
-    "name": "raffleCreated",
-    "type": "event"
-}, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_NFT",
-        "type": "address"
-    }, {"indexed": false, "internalType": "uint256", "name": "round", "type": "uint256"}, {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_NFTId",
+        "name": "NFTId",
         "type": "uint256"
     }],
     "name": "removedItem",
     "type": "event"
 }, {
-    "anonymous": false,
-    "inputs": [{"indexed": false, "internalType": "address", "name": "_FT", "type": "address"}, {
-        "indexed": false,
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "address",
-        "name": "_admin",
-        "type": "address"
-    }, {"indexed": false, "internalType": "bool", "name": "_status", "type": "bool"}],
-    "name": "settedAdmin",
-    "type": "event"
-}, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
-        "internalType": "address",
-        "name": "_NFT",
+        "name": "ticketAddr",
         "type": "address"
     }, {"internalType": "uint256", "name": "round", "type": "uint256"}],
     "name": "addAvailableNFT",
@@ -149,17 +179,27 @@ const RAFFLE = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
-    }, {"internalType": "uint256", "name": "_price", "type": "uint256"}, {
+    }, {"internalType": "uint256", "name": "price", "type": "uint256"}, {
         "internalType": "string",
         "name": "tokenURI",
         "type": "string"
     }], "name": "addItem", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "round",
+        "type": "uint256"
+    }, {"internalType": "uint256[]", "name": "price", "type": "uint256[]"}, {
+        "internalType": "string[]",
+        "name": "tokenURI",
+        "type": "string[]"
+    }], "name": "batchAddItem", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
@@ -169,35 +209,45 @@ const RAFFLE = [{
         "type": "address[]"
     }], "name": "batchRefund", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
     }], "name": "cancelRaffle", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "address",
-        "name": "raffleNFT",
+        "name": "target",
         "type": "address"
-    }], "name": "createPool", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+    }],
+    "name": "checkAdmin",
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view",
+    "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "address",
-        "name": "_NFT",
+        "name": "ticketAddr",
         "type": "address"
-    }, {"internalType": "uint256", "name": "stratTime", "type": "uint256"}, {
+    }, {"internalType": "uint256", "name": "stratBlock", "type": "uint256"}, {
         "internalType": "uint256",
-        "name": "endTime",
+        "name": "endBlock",
         "type": "uint256"
-    }], "name": "createRaffle", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+    }], "name": "createBox", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}],
-    "name": "destroyPool",
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
+        "internalType": "address",
+        "name": "productAddr",
+        "type": "address"
+    }], "name": "createShop", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}],
+    "name": "destroyShop",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
@@ -207,53 +257,87 @@ const RAFFLE = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
     }, {"internalType": "uint256", "name": "itemNumber", "type": "uint256"}],
     "name": "draw",
-    "outputs": [{"internalType": "uint256", "name": "_luckyDraw", "type": "uint256"}, {
+    "outputs": [{"internalType": "uint256", "name": "luckyDrawedNumber", "type": "uint256"}, {
         "internalType": "address",
-        "name": "_winner",
+        "name": "winner",
         "type": "address"
     }],
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
     }], "name": "endRaffle", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
     }], "name": "forceEndRaffle", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}],
-    "name": "getPool",
-    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}, {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-    }, {"internalType": "uint256", "name": "", "type": "uint256"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}],
+    "name": "getCurrentBox",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "round",
+        "type": "uint256"
+    }, {"internalType": "uint256", "name": "itemIdx", "type": "uint256"}],
+    "name": "getItem",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}, {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+    }, {"internalType": "address[]", "name": "", "type": "address[]"}, {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
     }],
     "stateMutability": "view",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "round",
+        "type": "uint256"
+    }, {"internalType": "uint256", "name": "itemNumber", "type": "uint256"}, {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+    }],
+    "name": "getRefundingAmount",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}],
+    "name": "getShop",
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}, {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }, {"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
     }, {"internalType": "uint256", "name": "selectedItem", "type": "uint256"}, {
         "internalType": "address",
-        "name": "NFTAddress",
+        "name": "addrOfNFT",
         "type": "address"
     }, {"internalType": "uint256", "name": "userNFT", "type": "uint256"}],
     "name": "joinRaffle",
@@ -267,7 +351,7 @@ const RAFFLE = [{
     "stateMutability": "view",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
@@ -277,15 +361,11 @@ const RAFFLE = [{
         "type": "address"
     }], "name": "refund", "outputs": [], "stateMutability": "nonpayable", "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
-        "internalType": "address",
-        "name": "_NFT",
-        "type": "address"
-    }, {"internalType": "uint256", "name": "round", "type": "uint256"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
-        "name": "_NFTId",
+        "name": "round",
         "type": "uint256"
-    }],
+    }, {"internalType": "uint256", "name": "itemIdx", "type": "uint256"}],
     "name": "removeItem",
     "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
     "stateMutability": "nonpayable",
@@ -297,17 +377,17 @@ const RAFFLE = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "address",
-        "name": "_admin",
+        "name": "admin",
         "type": "address"
-    }, {"internalType": "bool", "name": "_status", "type": "bool"}],
+    }, {"internalType": "bool", "name": "status", "type": "bool"}],
     "name": "setAdmin",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
         "name": "round",
         "type": "uint256"
@@ -319,17 +399,41 @@ const RAFFLE = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
-    "inputs": [{"internalType": "address", "name": "_FT", "type": "address"}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
         "internalType": "uint256",
-        "name": "_round",
+        "name": "round",
         "type": "uint256"
-    }, {"internalType": "address", "name": "NFTAddress", "type": "address"}, {
+    }, {"internalType": "address", "name": "addrOfNFT", "type": "address"}, {
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
     }],
-    "name": "usedToken",
+    "name": "usedTicket",
     "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "round",
+        "type": "uint256"
+    }],
+    "name": "viewBox",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}, {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }, {"internalType": "enum RaffleShop.Status", "name": "", "type": "uint8"}],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [{"internalType": "address", "name": "fungibleToken", "type": "address"}, {
+        "internalType": "uint256",
+        "name": "round",
+        "type": "uint256"
+    }, {"internalType": "uint256", "name": "itemIndex", "type": "uint256"}],
+    "name": "viewRaffle",
+    "outputs": [{"internalType": "uint256", "name": "ticketAmount", "type": "uint256"}],
     "stateMutability": "view",
     "type": "function"
 }]

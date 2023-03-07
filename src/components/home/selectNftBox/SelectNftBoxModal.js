@@ -107,12 +107,13 @@ function SelectNftBoxModal(props) {
                 let nftList = result.data;
                 if (result.result === 'success') {
                     for (let index = 0; index < nftList.length; index++) {
-                        const usedCheck = await raffleContract.methods.usedToken(KANV_CONTRACT_ADDRESS, 0, LARVA_NFT_CONTRACT_ADDRESS, parseInt(nftList[index].tokenId, 16)).call().then(e => {
-                            return e;
-                        })
-                        if (usedCheck) {
-                            nftList[index].status = 'Used';
-                        }
+                        // todo: 라운드 정보
+                        // const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, 0, LARVA_NFT_CONTRACT_ADDRESS, parseInt(nftList[index].tokenId, 16)).call().then(e => {
+                        //     return e;
+                        // })
+                        // if (usedCheck) {
+                        //     nftList[index].status = 'Used';
+                        // }
                     }
                     setListItem(nftList);
                     setSelectModal(true);

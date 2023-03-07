@@ -156,6 +156,17 @@ body {
     border: none;
     padding: 5px 20px;
 }
+.ok_btn {
+    display: inline-block;
+    text-align: center;
+    font-family: 'Poppins';
+    font-size: 1.5rem;
+    background: #b21f2d;
+    color: #FFF;
+    border-radius: 1rem;
+    border: none;
+    padding: 5px 20px;
+}
 .pagination {
     display: flex;
     justify-content: center;

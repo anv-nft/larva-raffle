@@ -8,8 +8,13 @@ import ShippingView from "../../common/ShippingView";
 
 function RaffleConfig(props) {
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
+    const [showConfirmModal, setShowConfirmModal] = useState(false); // 알림창 모달
+    const [showPrizeModal, setShowPrizeModal] = useState(false); // 당첨정보 모달
+    const [prizeArray, setPrizeArray] = useState([]); // 당첨정보 모달
     const [alerts, setAlerts] = useState(""); // 알림 메세지
     const [endRaffleList, setEndRaffleList] = useState([]);
+    const [selectRound, setSelectRound ] = useState("");
+    const [selectProduct, setSelectProduct] = useState([]);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -17,6 +22,10 @@ function RaffleConfig(props) {
     function closeAlert() {
         setShowAlertModal(false);
         setAlerts("");
+    }
+    function closePrize() {
+        setShowPrizeModal(false);
+        setPrizeArray([]);
     }
     const [productTokenId, setProductTokenId] = useState(); //선택 토큰
     const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
@@ -59,6 +68,16 @@ function RaffleConfig(props) {
         }
     }
     // 발송완료 처리
+    function openConfirm(round, item2){
+        setShowConfirmModal(true);
+        setSelectRound(round);
+        setSelectProduct(item2);
+    }
+    function closeConfirm(round, item2){
+        setShowConfirmModal(false);
+        setSelectRound("");
+        setSelectProduct([]);
+    }
     async function raffleItemShippingEnd(round, item){
         try{
             const tokenId = item.tokenId;
@@ -67,10 +86,28 @@ function RaffleConfig(props) {
                 item.is_complete = 'Y';
                 setAlerts(`${round}회차 ${item.title}이 발송완료 처리되었습니다.`);
                 setShowAlertModal(true);
+                setShowConfirmModal(false);
             }
         } catch (e){
             console.log(e);
             setAlerts(`${round}회차 [${item.title}] 발송완료 처리를 실패하였습니다.\n다시 시도해주세요.`);
+            setShowAlertModal(true);
+            setShowConfirmModal(false);
+        }
+
+    }
+    // 당첨정보 조회
+    async function prizeInfo(round, item){
+        try{
+            // const tokenId = item.tokenId;
+            const result = await POST(`/api/v1/raffle/prize`,{product_idx:item.product_idx},props.adminApiToken);
+            if (result.result === 'success') {
+                setPrizeArray([result.data.tokenId,result.data.address,result.data.raffleTx,result.data.prizeTx])
+                setShowPrizeModal(true);
+            }
+        } catch (e){
+            console.log(e);
+            setAlerts(`${round}회차 [${item.title}]\n 당첨 정보를 조회하지 못했습니다.\n다시 시도해주세요.`);
             setShowAlertModal(true);
         }
 
@@ -142,7 +179,7 @@ function RaffleConfig(props) {
                                     {item.start_date}
                                     ~ {item.end_date}
                                 </div>
-                                <div className={styles.raffle_list_item_box}>
+                                <div className={styles.raffle_list_item_box2}>
                                     <h3>진행상품</h3>
                                     {
                                         item.item.map((item2, index2) => (
@@ -153,21 +190,17 @@ function RaffleConfig(props) {
                                                 <div className={styles.raffle_list_item_right}>
                                                     {item2.title}<br/>
                                                     <span className={styles.raffle_list_item_span}>응모현황 : {item2.enter}</span>
+                                                    <button onClick={ () => prizeInfo(item.round, item2)} className={styles.raffle_list_item_button}>당첨정보</button>
                                                     <button onClick={ () => viewAddressFormFadeIn(item2.tokenId, item2.is_need_address)} className={styles.raffle_list_item_button}>배송신청현황</button>
                                                     {item2.is_complete === 'Y' ? (
                                                         <span className={styles.raffle_list_item_span2}>발송완료</span>
                                                     ):(
-                                                        <button onClick={() => raffleItemShippingEnd(item.round, item2)} className={styles.raffle_list_item_button}>발송완료처리</button>
+                                                        <button onClick={() => openConfirm(item.round, item2)} className={styles.raffle_list_item_button}>발송완료처리</button>
                                                     )}
                                                 </div>
                                             </div>
-
                                         ))
                                     }
-                                </div>
-                                <div className={styles.raffle_list_button_box}>
-                                    <button className={styles.raffle_btn}>구매 체결 트랜잭션</button>
-                                    <button className={styles.disable_btn}>환불 트랜잭션</button>
                                 </div>
                             </div>
                         ))
@@ -190,6 +223,40 @@ function RaffleConfig(props) {
                 </Modal.Body>
                 <Modal.Footer className="alert_box">
                     <button variant="" onClick={() => closeAlert()} className="close_btn">
+                        Close
+                    </button>
+                </Modal.Footer>
+            </Modal>
+            {/*알림창 모달*/}
+            <Modal centered show={showConfirmModal}
+                   onHide={() => closeConfirm()}>
+                <Modal.Body>
+                    <div className="text-center mt-5">
+                        발송완료 처리 하시겠습니까 ?
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="alert_box">
+                    <button variant="" onClick={() => raffleItemShippingEnd(selectRound, selectProduct)} className="ok_btn">
+                        확인
+                    </button>
+                    <button variant="" onClick={() => closeConfirm()} className="close_btn">
+                        취소
+                    </button>
+                </Modal.Footer>
+            </Modal>
+            {/*당첨 정보 모달*/}
+            <Modal centered show={showPrizeModal}
+                   onHide={() => closePrize()}>
+                <Modal.Body>
+                    <div className="text-center mt-5">
+                        <p className="alert_msg">응모 토큰ID {prizeArray[0]}</p>
+                        <p className="alert_msg">지갑주소 {prizeArray[1]}</p>
+                        <p className="alert_msg">응모 트렌젝션: {prizeArray[2]}</p>
+                        <p className="alert_msg">당첨 트렌젝션: {prizeArray[4]}</p>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="alert_box">
+                    <button variant="" onClick={() => closePrize()} className="close_btn">
                         Close
                     </button>
                 </Modal.Footer>
