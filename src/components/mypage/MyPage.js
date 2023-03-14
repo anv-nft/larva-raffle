@@ -228,7 +228,7 @@ function MyPage(props) {
                                 </div>
                                 <div className={styles.right}>
                                     <div className={styles.raffle_status}>
-                                        응모NFT : {parseInt(item.tokenId, 16)}<br/>
+                                        응모횟수 : {item.raffle_count}<br/><br/>
                                         {item.prize ? (
                                             "당첨"
                                         ) : (
@@ -237,14 +237,13 @@ function MyPage(props) {
                                     </div>
                                     {item.prize ? (
                                         item.address ? (
-                                            <button onClick={() => viewAddressFormFadeIn(item.tokenId, item.is_need_address)}
+                                            <button onClick={() => viewAddressFormFadeIn(item.productTokenID, item.is_need_address)}
                                                     className={styles.disable_btn}>배송지 주소 확인</button>
                                         ) : (
-                                            <button onClick={() => addressFormFadeIn(item.tokenId, item.is_need_address)}
+                                            <button onClick={() => addressFormFadeIn(item.productTokenID, item.is_need_address)}
                                                     className={styles.raffle_btn}>배송지 주소 입력</button>
                                         )
                                     ) : (
-                                        // <button onClick={() => alert(item.idx)} className={styles.disable_btn}>환불 조회</button>
                                         <></>
                                     )}
 

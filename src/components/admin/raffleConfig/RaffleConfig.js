@@ -8,13 +8,10 @@ import ShippingView from "../../common/ShippingView";
 
 function RaffleConfig(props) {
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
-    const [showConfirmModal, setShowConfirmModal] = useState(false); // 알림창 모달
     const [showPrizeModal, setShowPrizeModal] = useState(false); // 당첨정보 모달
-    const [prizeArray, setPrizeArray] = useState([]); // 당첨정보 모달
+    const [prizeArray, setPrizeArray] = useState([]); // 당첨정보
     const [alerts, setAlerts] = useState(""); // 알림 메세지
     const [endRaffleList, setEndRaffleList] = useState([]);
-    const [selectRound, setSelectRound ] = useState("");
-    const [selectProduct, setSelectProduct] = useState([]);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -37,64 +34,57 @@ function RaffleConfig(props) {
     }
     // 래플마감
     async function raffleEnd(round){
-        try{
-            const result = await POST(`/api/v1/raffle/end`,{round},props.adminApiToken);
-            if (result.result === 'success') {
-                setAlerts(`${round}회차 래플이 마감되었습니다.`);
+        if (window.confirm('정말 마감하시겠습니까?')) {
+            try{
+                const result = await POST(`/api/v1/raffle/end`,{round},props.adminApiToken);
+                if (result.result === 'success') {
+                    setAlerts(`${round}회차 래플이 마감되었습니다.`);
+                    setShowAlertModal(true);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (e){
+                console.log(e);
+                setAlerts(`${round}회차 래플 마감 처리를 실패하였습니다.\n다시 시도해주세요.`);
                 setShowAlertModal(true);
-            } else {
-                throw new Error(result.error);
             }
-        } catch (e){
-            console.log(e);
-            setAlerts(`${round}회차 래플 마감 처리를 실패하였습니다.\n다시 시도해주세요.`);
-            setShowAlertModal(true);
         }
     }
     // 래플 취소
     async function raffleCancel(round){
-        try{
-            const result = await POST(`/api/v1/raffle/cancel`,{round},props.adminApiToken);
-            if (result.result === 'success') {
-                setAlerts(`${round}회차 래플이 취소되었습니다.`);
+        if (window.confirm('정말 취소하시겠습니까?')) {
+            try {
+                const result = await POST(`/api/v1/raffle/cancel`, {round}, props.adminApiToken);
+                if (result.result === 'success') {
+                    setAlerts(`${round}회차 래플이 취소되었습니다.`);
+                    setShowAlertModal(true);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (e) {
+                console.log(e);
+                setAlerts(`${round}회차 래플 취소처리를 실패하였습니다.\n다시 시도해주세요.`);
                 setShowAlertModal(true);
-            } else {
-                throw new Error(result.error);
             }
-        } catch (e){
-            console.log(e);
-            setAlerts(`${round}회차 래플 취소처리를 실패하였습니다.\n다시 시도해주세요.`);
-            setShowAlertModal(true);
         }
     }
     // 발송완료 처리
-    function openConfirm(round, item2){
-        setShowConfirmModal(true);
-        setSelectRound(round);
-        setSelectProduct(item2);
-    }
-    function closeConfirm(round, item2){
-        setShowConfirmModal(false);
-        setSelectRound("");
-        setSelectProduct([]);
-    }
     async function raffleItemShippingEnd(round, item){
-        try{
-            const tokenId = item.tokenId;
-            const result = await POST(`/api/v1/raffle/shipping/end`,{tokenId},props.adminApiToken);
-            if (result.result === 'success') {
-                item.is_complete = 'Y';
-                setAlerts(`${round}회차 ${item.title}이 발송완료 처리되었습니다.`);
+        if (window.confirm('정말 완료처리하시겠습니까?')) {
+            try {
+                const tokenId = item.tokenId;
+                const result = await POST(`/api/v1/raffle/shipping/end`, {tokenId}, props.adminApiToken);
+                if (result.result === 'success') {
+                    item.is_complete = 'Y';
+                    setAlerts(`${round}회차 ${item.title}이 발송완료 처리되었습니다.`);
+                    setShowAlertModal(true);
+                }
+            } catch (e) {
+                console.log(e);
+                setAlerts(`${round}회차 [${item.title}] 발송완료 처리를 실패하였습니다.\n다시 시도해주세요.`);
                 setShowAlertModal(true);
-                setShowConfirmModal(false);
             }
-        } catch (e){
-            console.log(e);
-            setAlerts(`${round}회차 [${item.title}] 발송완료 처리를 실패하였습니다.\n다시 시도해주세요.`);
-            setShowAlertModal(true);
-            setShowConfirmModal(false);
         }
-
     }
     // 당첨정보 조회
     async function prizeInfo(round, item){
@@ -195,7 +185,7 @@ function RaffleConfig(props) {
                                                     {item2.is_complete === 'Y' ? (
                                                         <span className={styles.raffle_list_item_span2}>발송완료</span>
                                                     ):(
-                                                        <button onClick={() => openConfirm(item.round, item2)} className={styles.raffle_list_item_button}>발송완료처리</button>
+                                                        <button onClick={() => raffleItemShippingEnd(item.round, item2)} className={styles.raffle_list_item_button}>발송완료처리</button>
                                                     )}
                                                 </div>
                                             </div>
@@ -224,23 +214,6 @@ function RaffleConfig(props) {
                 <Modal.Footer className="alert_box">
                     <button variant="" onClick={() => closeAlert()} className="close_btn">
                         Close
-                    </button>
-                </Modal.Footer>
-            </Modal>
-            {/*알림창 모달*/}
-            <Modal centered show={showConfirmModal}
-                   onHide={() => closeConfirm()}>
-                <Modal.Body>
-                    <div className="text-center mt-5">
-                        발송완료 처리 하시겠습니까 ?
-                    </div>
-                </Modal.Body>
-                <Modal.Footer className="alert_box">
-                    <button variant="" onClick={() => raffleItemShippingEnd(selectRound, selectProduct)} className="ok_btn">
-                        확인
-                    </button>
-                    <button variant="" onClick={() => closeConfirm()} className="close_btn">
-                        취소
                     </button>
                 </Modal.Footer>
             </Modal>

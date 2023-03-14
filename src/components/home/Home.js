@@ -37,6 +37,11 @@ export default function Home(props) {
     }
     // nft 리스트 출력
     function nftListOpen(item) {
+        if(!props.raffleInfo.used){
+            setAlerts("래플 가능한 시간이 아닙니다.");
+            setShowAlertModal(true);
+            return false;
+        }
         if (!walletCheck()) {
             return false;
         }

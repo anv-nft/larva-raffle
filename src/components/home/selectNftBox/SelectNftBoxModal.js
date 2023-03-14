@@ -47,6 +47,7 @@ function SelectNftBoxModal(props) {
     }
     async function raffle() {
         props.item.idx = 0; // todo :  임시처리
+        props.item.price = 10; // todo :  임시처리
         const round = 0; // todo : 라운드
         try {
             // 어프로브 사전 체크
@@ -73,11 +74,13 @@ function SelectNftBoxModal(props) {
                 }
             }
             // 래플 실행
-            const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).estimateGas({
+            // const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).estimateGas({
+            const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, 1).estimateGas({
                 from: props.userAddress,
             });
             const gasPrice = await caver.klay.getGasPrice();
-            const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).send({
+            // const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).send({
+            const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, 1).send({
                 from: props.userAddress,
                 gas: gasLimit,
                 gasPrice,
