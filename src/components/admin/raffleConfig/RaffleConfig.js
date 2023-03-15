@@ -222,10 +222,18 @@ function RaffleConfig(props) {
                    onHide={() => closePrize()}>
                 <Modal.Body>
                     <div className="text-center mt-5">
-                        <p className="alert_msg">응모 토큰ID {prizeArray[0]}</p>
-                        <p className="alert_msg">지갑주소 {prizeArray[1]}</p>
-                        <p className="alert_msg">응모 트렌젝션: {prizeArray[2]}</p>
-                        <p className="alert_msg">당첨 트렌젝션: {prizeArray[4]}</p>
+                        <p className="alert_msg">
+                            응모 토큰ID<br/>
+                            {`${prizeArray[0]} (${parseInt(prizeArray[0], 16)})`}</p>
+                        <p className="alert_msg">
+                            지갑주소<br/>
+                            {prizeArray[1]}</p>
+                        <p className="alert_msg">
+                            응모 트렌젝션<br/>
+                            {prizeArray[2]}</p>
+                        <p className="alert_msg">
+                            당첨 트렌젝션<br/>
+                            {prizeArray[4]}</p>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="alert_box">
