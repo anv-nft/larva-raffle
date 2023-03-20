@@ -48,6 +48,18 @@ export default function Home(props) {
         setItem(item);
         setSelectBox(true);
     }
+    function YYYYMMDDHIS(orgDate){
+        let date = new Date(orgDate);
+        let year = date.getFullYear();
+        let month = ('0' + (date.getMonth() + 1)).slice(-2);
+        let day = ('0' + date.getDate()).slice(-2);
+        let hours = ('0' + date.getHours()).slice(-2);
+        let minutes = ('0' + date.getMinutes()).slice(-2);
+        let seconds = ('0' + date.getSeconds()).slice(-2);
+        let dateString = year + '-' + month  + '-' + day;
+        let timeString = hours + ':' + minutes  + ':' + seconds;
+        return dateString + ' ' + timeString;
+    }
     useEffect(() => {
         AOS.init({
             duration: 1000
@@ -76,19 +88,17 @@ export default function Home(props) {
                         </div>
                     </h1>
                     <p className={styles.visual_box_text}>
-                        래플 소개 텍스트 입니다.래플 소개 텍스트 입니다.
-                        래플 소개 텍스트 입니다.래플 소개 텍스트 입니다.
-                        래플 소개 텍스트 입니다.래플 소개 텍스트 입니다.
-                        래플 소개 텍스트 입니다.래플 소개 텍스트 입니다.
+                        {props.raffleInfo.title}<br/>
+                        {props.raffleInfo.description}
                     </p>
                     <div className={styles.visual_box_date}>
                         <div>
                             <div>기간</div>
-                            <div>{props.raffleInfo.start_date}<br/>~ {props.raffleInfo.end_date}</div>
+                            <div>{YYYYMMDDHIS(props.raffleInfo.start_date)}<br/> ~ {YYYYMMDDHIS(props.raffleInfo.end_date)}</div>
                         </div>
                         <div>
                             <div>발표</div>
-                            <div>{props.raffleInfo.announcement_date}</div>
+                            <div>{YYYYMMDDHIS(props.raffleInfo.announcement_date)}</div>
                         </div>
                     </div>
                 </div>

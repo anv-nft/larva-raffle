@@ -31,40 +31,35 @@ function SelectNftBoxModal(props) {
         box.classList.add(styles.active);
     }
 
-// KANV에 대한 어프로브 확인
+    // KANV에 대한 어프로브 확인
     async function approveCheck(itemPrice) {
         const approveAmount = await kanvContract.methods.allowance(props.userAddress, RAFFLE_CONTRACT_ADDRESS).call().then(e => {
             return e;
         });
-        console.log(approveAmount)
-        console.log(itemPrice)
         if (Number.parseFloat(approveAmount) >= Number.parseFloat(itemPrice)) {
             return true;
         } else {
-            console.log('실패잖아');
             return false;
         }
     }
     async function raffle() {
-        props.item.idx = 0; // todo :  임시처리
-        props.item.price = 10; // todo :  임시처리
-        const round = 0; // todo : 라운드
+        const price = BigInt(props.item.price * 10 ** 18);
         try {
             // 어프로브 사전 체크
-            if (!await approveCheck(props.item.price)) {
+            if (!await approveCheck(price)) {
                 // 비용 만큼 토큰 보유 중인지
                 const balanceAmount = await kanvContract.methods.balanceOf(props.userAddress).call();
-                if (Number.parseFloat(props.item.price) > Number.parseFloat(balanceAmount)) {
+                if (Number.parseFloat(price) > Number.parseFloat(balanceAmount)) {
                     props.setAlerts("The KANV is insufficient.");
                     props.setShowAlertModal(true);
                     return false;
                 }
                 // 어프로브 실행
                 try {
-                    const gasLimitApprove = await kanvContract.methods.approve(RAFFLE_CONTRACT_ADDRESS, props.item.price).estimateGas({
+                    const gasLimitApprove = await kanvContract.methods.approve(RAFFLE_CONTRACT_ADDRESS, price).estimateGas({
                         from: props.userAddress,
                     });
-                    await kanvContract.methods.approve(RAFFLE_CONTRACT_ADDRESS, props.item.price).send({
+                    await kanvContract.methods.approve(RAFFLE_CONTRACT_ADDRESS, price).send({
                         from: props.userAddress,
                         gas: gasLimitApprove
                     });
@@ -74,13 +69,11 @@ function SelectNftBoxModal(props) {
                 }
             }
             // 래플 실행
-            // const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).estimateGas({
-            const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, 1).estimateGas({
+            const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, props.raffleInfo.round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).estimateGas({
                 from: props.userAddress,
             });
             const gasPrice = await caver.klay.getGasPrice();
-            // const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).send({
-            const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, 1).send({
+            const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, props.raffleInfo.round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).send({
                 from: props.userAddress,
                 gas: gasLimit,
                 gasPrice,
@@ -110,13 +103,12 @@ function SelectNftBoxModal(props) {
                 let nftList = result.data;
                 if (result.result === 'success') {
                     for (let index = 0; index < nftList.length; index++) {
-                        // todo: 라운드 정보
-                        // const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, 0, LARVA_NFT_CONTRACT_ADDRESS, parseInt(nftList[index].tokenId, 16)).call().then(e => {
-                        //     return e;
-                        // })
-                        // if (usedCheck) {
-                        //     nftList[index].status = 'Used';
-                        // }
+                        const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, props.raffleInfo.round, LARVA_NFT_CONTRACT_ADDRESS, parseInt(nftList[index].tokenId, 16)).call().then(e => {
+                            return e;
+                        })
+                        if (usedCheck) {
+                            nftList[index].status = 'Used';
+                        }
                     }
                     setListItem(nftList);
                     setSelectModal(true);
