@@ -4,8 +4,7 @@ import DaumPostcode from "react-daum-postcode";
 import Caver from "caver-js";
 import {POST} from "../../api/api";
 import styles from "./MyPage.module.scss";
-import ReffleItem01 from "../../assets/images/home/reffle_item_01.png";
-import {RAFFLE_NFT} from "../../utils/abi/PAUSABLE_NFT";
+import {RAFFLE_NFT} from "../../utils/abi/RAFFLE_NFT";
 import {contracts} from "../../utils/web3/contracts";
 import popIcon from "../../assets/images/icon/pop_icon.svg"
 import ShippingView from "../common/ShippingView";
@@ -43,6 +42,7 @@ function MyPage(props) {
     const postModalOpen = () => setPostModalShow(true);
 
     const [homeAddress, setHomeAddress] = useState([]);
+
     function addressFormFadeIn(tokenId, postUse, item) {
         setProductTokenId(tokenId);
         setProduct(item)
@@ -51,7 +51,9 @@ function MyPage(props) {
         }
         modalOpen();
     }
+
     const [shippingView, setShippingView] = useState(false);
+
     async function viewAddressFormFadeIn(tokenId, postUse) {
         setPostUseState(postUse);
         setProductTokenId(tokenId);
@@ -161,6 +163,7 @@ function MyPage(props) {
         }
         modalClose();
     }
+
     const agreeCheck = (agree) => {
         if (agree) {
             setAgreeState(true);
@@ -191,7 +194,7 @@ function MyPage(props) {
     };
 
     useEffect(() => {
-        async function getMyRaffleList(){
+        async function getMyRaffleList() {
             const address = props.accounts;
             await POST(`/api/v1/raffle/getMyHistoryRaffle`, {
                 address,
@@ -204,8 +207,9 @@ function MyPage(props) {
                 }
             });
         }
+
         getMyRaffleList();
-    }, [props.accounts, props.apiToken,page]);
+    }, [props.accounts, props.apiToken, page]);
     return (
         <>
             <div className={styles.my_page}>
@@ -238,11 +242,13 @@ function MyPage(props) {
                                     </div>
                                     {item.prize ? (
                                         item.address ? (
-                                            <button onClick={() => viewAddressFormFadeIn(item.productTokenID, item.is_need_address)}
-                                                    className={styles.disable_btn}>배송지 주소 확인</button>
+                                            <button
+                                                onClick={() => viewAddressFormFadeIn(item.productTokenID, item.is_need_address)}
+                                                className={styles.disable_btn}>배송지 주소 확인</button>
                                         ) : (
-                                            <button onClick={() => addressFormFadeIn(item.productTokenID, item.is_need_address, item)}
-                                                    className={styles.raffle_btn}>배송지 주소 입력</button>
+                                            <button
+                                                onClick={() => addressFormFadeIn(item.productTokenID, item.is_need_address, item)}
+                                                className={styles.raffle_btn}>배송지 주소 입력</button>
                                         )
                                     ) : (
                                         <></>
@@ -353,7 +359,9 @@ function MyPage(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setProductTokenId={setProductTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId}
+                          postUse={postUseState} apiToken={props.apiToken} address={props.accounts}
+                          setProductTokenId={setProductTokenId}/>
         </>
     )
 }

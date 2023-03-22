@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ScrollParallax } from "react-just-parallax";
+import {ScrollParallax} from "react-just-parallax";
 import "swiper/swiper.scss";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -36,9 +36,10 @@ export default function Home(props) {
         }
         return true;
     }
+
     // nft 리스트 출력
     function nftListOpen(item) {
-        if(!props.raffleInfo.used){
+        if (!props.raffleInfo.used) {
             setAlerts("래플 가능한 시간이 아닙니다.");
             setShowAlertModal(true);
             return false;
@@ -59,19 +60,27 @@ export default function Home(props) {
         <div>
             <section className={styles.visual_section}>
                 <img className={styles.background_img} src={VisualBackground} alt="Visual Background"/>
-                <ScrollParallax strength={0.2} lerpEase={0.06} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
-                    <img data-aos="fade-up-left" className={`${styles.visual_card} ${styles.card_01}`} src={VisualCard01} alt="Visual Background"/>
+                <ScrollParallax strength={0.2} lerpEase={0.06} isAbsolutelyPositioned={true} zIndex={2}
+                                shouldPause={true}>
+                    <img data-aos="fade-up-left" className={`${styles.visual_card} ${styles.card_01}`}
+                         src={VisualCard01} alt="Visual Background"/>
                 </ScrollParallax>
-                <ScrollParallax strength={0.15} lerpEase={0.12} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
-                    <img data-aos="zoom-in-right" data-aos-offset="600" className={`${styles.visual_card} ${styles.card_02}`} src={VisualCard02} alt="Visual Background"/>
+                <ScrollParallax strength={0.15} lerpEase={0.12} isAbsolutelyPositioned={true} zIndex={2}
+                                shouldPause={true}>
+                    <img data-aos="zoom-in-right" data-aos-offset="600"
+                         className={`${styles.visual_card} ${styles.card_02}`} src={VisualCard02}
+                         alt="Visual Background"/>
                 </ScrollParallax>
-                <ScrollParallax strength={0.07} lerpEase={0.08} isAbsolutelyPositioned={true} zIndex={2} shouldPause={true}>
-                    <img data-aos="zoom-in-left" data-aos-offset="500"  className={`${styles.visual_card} ${styles.card_03}`} src={VisualCard03} alt="Visual Background"/>
+                <ScrollParallax strength={0.07} lerpEase={0.08} isAbsolutelyPositioned={true} zIndex={2}
+                                shouldPause={true}>
+                    <img data-aos="zoom-in-left" data-aos-offset="500"
+                         className={`${styles.visual_card} ${styles.card_03}`} src={VisualCard03}
+                         alt="Visual Background"/>
                 </ScrollParallax>
                 <div className={styles.visual_box}>
                     <h1 className={styles.visual_box_title}>
-                       LARVA NFT<br/>
-                       <span>RAFFLE EVENT</span>
+                        LARVA NFT<br/>
+                        <span>RAFFLE EVENT</span>
                         <div className={styles.visual_box_title_img}>
                             <img src={VisualTitleBadge} alt={"badge img"}/>
                             <span>{props.raffleInfo.round}회차</span>
@@ -84,7 +93,8 @@ export default function Home(props) {
                     <div className={styles.visual_box_date}>
                         <div>
                             <div>기간</div>
-                            <div>{anvUtils.YYYYMMDDHIS(props.raffleInfo.start_date)}<br/> ~ {anvUtils.YYYYMMDDHIS(props.raffleInfo.end_date)}</div>
+                            <div>{anvUtils.YYYYMMDDHIS(props.raffleInfo.start_date)}<br/> ~ {anvUtils.YYYYMMDDHIS(props.raffleInfo.end_date)}
+                            </div>
                         </div>
                         <div>
                             <div>발표</div>
@@ -102,7 +112,7 @@ export default function Home(props) {
                             props.raffleList.map((item, index) => (
                                 <div key={index} className={styles.raffle_item} data-aos="flip-right">
                                     <div className={styles.raffle_item_info}>
-                                        <img src={item.image_url} alt={`${item.title} img`} />
+                                        <img src={item.image_url} alt={`${item.title} img`}/>
                                         <h6>{item.title}</h6>
                                         <div>
                                             <label>가격</label>
@@ -113,7 +123,16 @@ export default function Home(props) {
                                             <p>{item.enter}<span>개</span></p>
                                         </div>
                                     </div>
-                                    <button onClick={() => nftListOpen(item)} className={styles.raffle_btn}>응모하기</button>
+                                    <>
+                                        {
+                                            (props.raffleInfo.used) ?
+                                                <button onClick={() => nftListOpen(item)}
+                                                        className={styles.raffle_btn}>응모하기</button>
+                                                :
+                                                <button onClick={() => nftListOpen(item)}
+                                                        className={styles.disable_btn}>응모하기</button>
+                                        }
+                                    </>
                                 </div>
                             ))
                         }
@@ -137,7 +156,8 @@ export default function Home(props) {
             </Modal>
             <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
             {selectBox &&
-                <SelectNftBoxModal selectBox={selectBox} setSelectBox={setSelectBox} setAlerts={setAlerts} setShowAlertModal={setShowAlertModal}
+                <SelectNftBoxModal selectBox={selectBox} setSelectBox={setSelectBox} setAlerts={setAlerts}
+                                   setShowAlertModal={setShowAlertModal}
                                    userAddress={props.accounts} networkId={props.networkId} apiToken={props.apiToken}
                                    setShowLoading={setShowLoading} raffleInfo={props.raffleInfo} item={item}/>
             }
