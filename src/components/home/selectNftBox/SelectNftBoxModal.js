@@ -103,7 +103,7 @@ function SelectNftBoxModal(props) {
                 let nftList = result.data;
                 if (result.result === 'success') {
                     for (let index = 0; index < nftList.length; index++) {
-                        const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, props.raffleInfo.idx, LARVA_NFT_CONTRACT_ADDRESS, nftList[index].tokenId).call().then(e => {
+                        const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, props.raffleInfo.idx, nftList[index].tokenId).call().then(e => {
                             return e;
                         })
                         if (usedCheck) {

@@ -5,7 +5,7 @@ import Caver from "caver-js";
 import {POST} from "../../api/api";
 import styles from "./MyPage.module.scss";
 import ReffleItem01 from "../../assets/images/home/reffle_item_01.png";
-import {PAUSABLE_NFT} from "../../utils/abi/PAUSABLE_NFT";
+import {RAFFLE_NFT} from "../../utils/abi/PAUSABLE_NFT";
 import {contracts} from "../../utils/web3/contracts";
 import popIcon from "../../assets/images/icon/pop_icon.svg"
 import ShippingView from "../common/ShippingView";
@@ -125,12 +125,12 @@ function MyPage(props) {
             if (saveResult.result === 'success') {
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
-                const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, RAFFLE_NFT_CONTRACT_ADDRESS);
-                const gasLimit = await kip17instance.methods.burn(nftToken).estimateGas({
+                const kip17instance = new caver.klay.Contract(RAFFLE_NFT, RAFFLE_NFT_CONTRACT_ADDRESS);
+                const gasLimit = await kip17instance.methods.exchange(nftToken).estimateGas({
                     from: props.accounts,
                 })
                 const gasPrice = await caver.rpc.klay.getGasPrice();
-                await kip17instance.methods.burn(nftToken).send({
+                await kip17instance.methods.exchange(nftToken).send({
                     from: props.accounts,
                     gas: gasLimit,
                     gasPrice,
