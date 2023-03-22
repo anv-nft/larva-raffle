@@ -5,8 +5,10 @@ import icon_01 from "../../../assets/images/icon/icon_01.png";
 import {POST} from "../../../api/api";
 import {Link} from "react-router-dom";
 import ItemAdd from "./itemAdd/ItemAdd";
+import LoadingModal from "../../loadingModal/LoadingModal";
 
 function RaffleAdd(props) {
+    const [showLoading, setShowLoading] = useState(false); // 로딩 모달
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
     const [showSuccessAlertModal, setShowSuccessAlertModal] = useState(false); // 알림창 모달
     const [alerts, setAlerts] = useState(""); // 알림 메세지
@@ -37,7 +39,7 @@ function RaffleAdd(props) {
 
     async function formCheck() {
         const form = new FormData(document.getElementById('raffleForm'));
-        form.append('walletAddress',props.accounts);
+        // form.append('walletAddress',props.accounts);
         for (const keyValue of form) {
             console.log(keyValue);
             if (!keyValue[1] || keyValue[1].size === 0) {
@@ -82,11 +84,13 @@ function RaffleAdd(props) {
             }
             console.log(keyValue[1]);
         }
+        setShowLoading(true);
         await POST(`/api/v1/raffle/createRaffle`, form, props.adminApiToken).then(async (result) => {
             if (result.result === 'success') {
                 setShowSuccessAlertModal(true);
             }
         });
+        setShowLoading(false);
     }
     return (
         <>
@@ -177,6 +181,7 @@ function RaffleAdd(props) {
                     <Link  className="close_btn" to={"/admin/raffle_config"}> 확인</Link>
                 </Modal.Footer>
             </Modal>
+            <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
         </>
     )
 }

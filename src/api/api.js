@@ -4,7 +4,7 @@ import {store} from '../store';
 import {isTestNet} from "../utils/web3/networks";
 
 
-export const MAIN_URL = isTestNet ? 'http://localhost:4000' : 'https://api2.aniversenft.com';
+export const MAIN_URL = isTestNet ? 'http://192.168.88.120:4000' : 'https://api2.aniversenft.com';
 
 const axiosInstance = axios.create({
     baseURL: MAIN_URL

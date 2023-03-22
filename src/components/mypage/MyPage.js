@@ -16,6 +16,7 @@ function MyPage(props) {
     const contractAddress = "0xa3c368148327a57d05fdeb81f1a8c8ee1884305f";
     const [myRaffleList, setMyRaffleList] = useState([]);
     const [productTokenId, setProductTokenId] = useState(); //선택한 상품
+    const [product, setProduct] = useState(); //선택한 상품
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -42,9 +43,10 @@ function MyPage(props) {
     const postModalOpen = () => setPostModalShow(true);
 
     const [homeAddress, setHomeAddress] = useState([]);
-    function addressFormFadeIn(tokenId, postUse) {
+    function addressFormFadeIn(tokenId, postUse, item) {
         setProductTokenId(tokenId);
-        if (postUse) {
+        setProduct(item)
+        if (postUse === 'Y') {
             setPostUseState(true);
         }
         modalOpen();
@@ -121,16 +123,14 @@ function MyPage(props) {
             }
             const saveResult = await POST(`/api/v1/raffle/address/save`, saveData, props.apiToken);
             if (saveResult.result === 'success') {
-                // todo : 배송완료 프로세스 마무리
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
                 const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, RAFFLE_NFT_CONTRACT_ADDRESS);
-                const tokenNumber = parseInt(nftToken, 16);
-                const gasLimit = await kip17instance.methods.burn(tokenNumber).estimateGas({
+                const gasLimit = await kip17instance.methods.burn(nftToken).estimateGas({
                     from: props.accounts,
                 })
                 const gasPrice = await caver.rpc.klay.getGasPrice();
-                await kip17instance.methods.burn(tokenNumber).send({
+                await kip17instance.methods.burn(nftToken).send({
                     from: props.accounts,
                     gas: gasLimit,
                     gasPrice,
@@ -143,6 +143,7 @@ function MyPage(props) {
                     }
                     const saveTransactionResult = await POST(`/api/v1/raffle/address/save/transaction`, saveTransactionData, props.apiToken);
                     if (saveTransactionResult.result === 'success') {
+                        product.address = true;
                         alert('신청이 완료 되었습니다.');
                     } else {
                         alert('신청중 오류가 발생하였습니다.');
@@ -217,7 +218,7 @@ function MyPage(props) {
                         myRaffleList.map((item, index) => (
                             <div key={index} className={styles.raffle_item}>
                                 <div className={styles.left}>
-                                    <img src={ReffleItem01} alt={`${item.title} img`}/>
+                                    <img src={item.image_url} alt={`${item.title} img`}/>
                                     <div className={styles.raffle_info}>
                                         <div>
                                             <span>{item.round}회차</span> {item.round_date}
@@ -240,7 +241,7 @@ function MyPage(props) {
                                             <button onClick={() => viewAddressFormFadeIn(item.productTokenID, item.is_need_address)}
                                                     className={styles.disable_btn}>배송지 주소 확인</button>
                                         ) : (
-                                            <button onClick={() => addressFormFadeIn(item.productTokenID, item.is_need_address)}
+                                            <button onClick={() => addressFormFadeIn(item.productTokenID, item.is_need_address, item)}
                                                     className={styles.raffle_btn}>배송지 주소 입력</button>
                                         )
                                     ) : (
@@ -326,7 +327,7 @@ function MyPage(props) {
                             }
                         </form>
                         <span style={{color: "red"}}>* 신청이 완료되면 보유한 NFT는 소각 처리됩니다.</span><br/>
-                        <span style={{color: "red"}}>* TokenID : #{parseInt(productTokenId, 16)}</span><br/>
+                        <span style={{color: "red"}}>* TokenID : #{productTokenId}</span><br/>
                         <div className={styles.btnBox}>
                             <button onClick={modalClose}>
                                 취소
@@ -352,7 +353,7 @@ function MyPage(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setNftTokenId={setProductTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.apiToken} address={props.accounts} setProductTokenId={setProductTokenId}/>
         </>
     )
 }

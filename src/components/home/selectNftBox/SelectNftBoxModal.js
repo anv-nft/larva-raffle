@@ -69,11 +69,11 @@ function SelectNftBoxModal(props) {
                 }
             }
             // 래플 실행
-            const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, props.raffleInfo.round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).estimateGas({
+            const gasLimit = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, props.raffleInfo.idx, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).estimateGas({
                 from: props.userAddress,
             });
             const gasPrice = await caver.klay.getGasPrice();
-            const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, props.raffleInfo.round, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).send({
+            const joinRaffleResult = await raffleContract.methods.joinRaffle(KANV_CONTRACT_ADDRESS, props.raffleInfo.idx, props.item.idx, LARVA_NFT_CONTRACT_ADDRESS, selectedNftTokenId).send({
                 from: props.userAddress,
                 gas: gasLimit,
                 gasPrice,
@@ -103,7 +103,7 @@ function SelectNftBoxModal(props) {
                 let nftList = result.data;
                 if (result.result === 'success') {
                     for (let index = 0; index < nftList.length; index++) {
-                        const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, props.raffleInfo.round, LARVA_NFT_CONTRACT_ADDRESS, parseInt(nftList[index].tokenId, 16)).call().then(e => {
+                        const usedCheck = await raffleContract.methods.usedTicket(KANV_CONTRACT_ADDRESS, props.raffleInfo.idx, LARVA_NFT_CONTRACT_ADDRESS, nftList[index].tokenId).call().then(e => {
                             return e;
                         })
                         if (usedCheck) {
@@ -153,7 +153,7 @@ function SelectNftBoxModal(props) {
                             (nft.status) ? (
                                 <div key={nft.tokenId} className={`${styles.nft_box} ${styles.selected_box}`}>
                                     <img className={styles.nft_img} src={nft.image} alt={nft.tokenId}/>
-                                    <span>#<span>{parseInt(nft.tokenId, 16)}</span> Larva</span>
+                                    <span>#<span>{nft.tokenId}</span> Larva</span>
                                     <span className={styles.hide}>{nft.character}</span>
                                     <div className={styles.selected_dim}>{nft.status}</div>
                                 </div>
@@ -162,7 +162,7 @@ function SelectNftBoxModal(props) {
                                     selectNft(event)
                                 }}>
                                     <img className={styles.nft_img} src={nft.image} alt={nft.tokenId}/>
-                                    <span>#<span>{parseInt(nft.tokenId, 16)}</span> Larva</span>
+                                    <span>#<span>{nft.tokenId}</span> Larva</span>
                                 </div>
                             )
                         ))

@@ -13,6 +13,7 @@ import VisualTitleBadge from "../../assets/images/home/title_badge.png";
 import ContentBackground from "../../assets/images/home/back_mid_01.png";
 import styles from "./Home.module.scss";
 import {Modal} from "react-bootstrap";
+import anvUtils from "../../utils/anvUtils";
 
 export default function Home(props) {
     const [showLoading, setShowLoading] = useState(false); // 로딩 모달
@@ -48,18 +49,7 @@ export default function Home(props) {
         setItem(item);
         setSelectBox(true);
     }
-    function YYYYMMDDHIS(orgDate){
-        let date = new Date(orgDate);
-        let year = date.getFullYear();
-        let month = ('0' + (date.getMonth() + 1)).slice(-2);
-        let day = ('0' + date.getDate()).slice(-2);
-        let hours = ('0' + date.getHours()).slice(-2);
-        let minutes = ('0' + date.getMinutes()).slice(-2);
-        let seconds = ('0' + date.getSeconds()).slice(-2);
-        let dateString = year + '-' + month  + '-' + day;
-        let timeString = hours + ':' + minutes  + ':' + seconds;
-        return dateString + ' ' + timeString;
-    }
+
     useEffect(() => {
         AOS.init({
             duration: 1000
@@ -94,11 +84,11 @@ export default function Home(props) {
                     <div className={styles.visual_box_date}>
                         <div>
                             <div>기간</div>
-                            <div>{YYYYMMDDHIS(props.raffleInfo.start_date)}<br/> ~ {YYYYMMDDHIS(props.raffleInfo.end_date)}</div>
+                            <div>{anvUtils.YYYYMMDDHIS(props.raffleInfo.start_date)}<br/> ~ {anvUtils.YYYYMMDDHIS(props.raffleInfo.end_date)}</div>
                         </div>
                         <div>
                             <div>발표</div>
-                            <div>{YYYYMMDDHIS(props.raffleInfo.announcement_date)}</div>
+                            <div>{anvUtils.YYYYMMDDHIS(props.raffleInfo.announcement_date)}</div>
                         </div>
                     </div>
                 </div>

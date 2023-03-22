@@ -5,8 +5,11 @@ import {POST} from "../../../api/api";
 import Pagination from "../../common/Pagination";
 import {Link} from "react-router-dom";
 import ShippingView from "../../common/ShippingView";
+import anvUtils from "../../../utils/anvUtils";
+import LoadingModal from "../../loadingModal/LoadingModal";
 
 function RaffleConfig(props) {
+    const [showLoading, setShowLoading] = useState(false); // 로딩 모달
     const [showAlertModal, setShowAlertModal] = useState(false); // 알림창 모달
     const [showPrizeModal, setShowPrizeModal] = useState(false); // 당첨정보 모달
     const [prizeArray, setPrizeArray] = useState([]); // 당첨정보
@@ -37,6 +40,7 @@ function RaffleConfig(props) {
         if (window.confirm('정말 마감하시겠습니까?')) {
             try{
                 const result = await POST(`/api/v1/raffle/end`,{round},props.adminApiToken);
+                setShowLoading(true);
                 if (result.result === 'success') {
                     setAlerts(`${round}회차 래플이 마감되었습니다.`);
                     setShowAlertModal(true);
@@ -48,6 +52,7 @@ function RaffleConfig(props) {
                 setAlerts(`${round}회차 래플 마감 처리를 실패하였습니다.\n다시 시도해주세요.`);
                 setShowAlertModal(true);
             }
+            setShowLoading(false);
         }
     }
     // 래플 취소
@@ -55,6 +60,7 @@ function RaffleConfig(props) {
         if (window.confirm('정말 취소하시겠습니까?')) {
             try {
                 const result = await POST(`/api/v1/raffle/cancel`, {round}, props.adminApiToken);
+                setShowLoading(true);
                 if (result.result === 'success') {
                     setAlerts(`${round}회차 래플이 취소되었습니다.`);
                     setShowAlertModal(true);
@@ -66,6 +72,7 @@ function RaffleConfig(props) {
                 setAlerts(`${round}회차 래플 취소처리를 실패하였습니다.\n다시 시도해주세요.`);
                 setShowAlertModal(true);
             }
+            setShowLoading(false);
         }
     }
     // 발송완료 처리
@@ -130,8 +137,8 @@ function RaffleConfig(props) {
                         <div className={styles.raffle_list_info}>
                             <div className={styles.raffle_round}>{props.raffleInfo?.round}회차</div>
                             <br/>
-                            {props.raffleInfo?.start_date}
-                            ~ {props.raffleInfo?.end_date}
+                            {anvUtils.YYYYMMDDHIS(props.raffleInfo?.start_date)}
+                            ~ {anvUtils.YYYYMMDDHIS(props.raffleInfo?.end_date)}
                         </div>
                         <div className={styles.raffle_list_item_box}>
                             <h3>진행상품</h3>
@@ -244,6 +251,7 @@ function RaffleConfig(props) {
             </Modal>
             {/*배송정보 확인 모달*/}
             <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts} setNftTokenId={setProductTokenId}/>
+            <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
         </>
     )
 }
