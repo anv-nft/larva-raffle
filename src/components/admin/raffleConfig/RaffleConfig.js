@@ -18,28 +18,33 @@ function RaffleConfig(props) {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
+
     // const offset = (page - 1) * limit;
     function closeAlert() {
         setShowAlertModal(false);
         setAlerts("");
     }
+
     function closePrize() {
         setShowPrizeModal(false);
         setPrizeArray([]);
     }
+
     const [productTokenId, setProductTokenId] = useState(); //선택 토큰
     const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
     const [shippingView, setShippingView] = useState(false);
+
     async function viewAddressFormFadeIn(tokenId, postUse) {
         setPostUseState(postUse);
         setProductTokenId(tokenId);
         setShippingView(true);
     }
+
     // 래플마감
-    async function raffleEnd(round){
+    async function raffleEnd(round) {
         if (window.confirm('정말 마감하시겠습니까?')) {
-            try{
-                const result = await POST(`/api/v1/raffle/end`,{round},props.adminApiToken);
+            try {
+                const result = await POST(`/api/v1/raffle/end`, {round}, props.adminApiToken);
                 setShowLoading(true);
                 if (result.result === 'success') {
                     setAlerts(`${round}회차 래플이 마감되었습니다.`);
@@ -47,7 +52,7 @@ function RaffleConfig(props) {
                 } else {
                     throw new Error(result.error);
                 }
-            } catch (e){
+            } catch (e) {
                 console.log(e);
                 setAlerts(`${round}회차 래플 마감 처리를 실패하였습니다.\n다시 시도해주세요.`);
                 setShowAlertModal(true);
@@ -55,8 +60,9 @@ function RaffleConfig(props) {
             setShowLoading(false);
         }
     }
+
     // 래플 취소
-    async function raffleCancel(round){
+    async function raffleCancel(round) {
         if (window.confirm('정말 취소하시겠습니까?')) {
             try {
                 const result = await POST(`/api/v1/raffle/cancel`, {round}, props.adminApiToken);
@@ -75,8 +81,9 @@ function RaffleConfig(props) {
             setShowLoading(false);
         }
     }
+
     // 발송완료 처리
-    async function raffleItemShippingEnd(round, item){
+    async function raffleItemShippingEnd(round, item) {
         if (window.confirm('정말 완료처리하시겠습니까?')) {
             try {
                 const tokenId = item.tokenId;
@@ -93,25 +100,27 @@ function RaffleConfig(props) {
             }
         }
     }
+
     // 당첨정보 조회
-    async function prizeInfo(round, item){
-        try{
+    async function prizeInfo(round, item) {
+        try {
             // const tokenId = item.tokenId;
-            const result = await POST(`/api/v1/raffle/prize`,{product_idx:item.product_idx},props.adminApiToken);
+            const result = await POST(`/api/v1/raffle/prize`, {product_idx: item.product_idx}, props.adminApiToken);
             if (result.result === 'success') {
-                setPrizeArray([result.data.tokenId,result.data.address,result.data.raffleTx,result.data.prizeTx])
+                setPrizeArray([result.data.tokenId, result.data.address, result.data.raffleTx, result.data.prizeTx])
                 setShowPrizeModal(true);
             }
-        } catch (e){
+        } catch (e) {
             console.log(e);
             setAlerts(`${round}회차 [${item.title}]\n 당첨 정보를 조회하지 못했습니다.\n다시 시도해주세요.`);
             setShowAlertModal(true);
         }
 
     }
+
     useEffect(() => {
         async function getEndRaffleList() {
-            await POST(`/api/v1/raffle/getEndRaffleList`,{page,limit},props.adminApiToken).then(async (result) => {
+            await POST(`/api/v1/raffle/getEndRaffleList`, {page, limit}, props.adminApiToken).then(async (result) => {
                 if (result.result === 'success') {
                     setEndRaffleList(result.data);
                     setLimit(result.limit);
@@ -119,6 +128,7 @@ function RaffleConfig(props) {
                 }
             });
         }
+
         getEndRaffleList();
     }, [page, props.adminApiToken]);
     return (
@@ -133,34 +143,42 @@ function RaffleConfig(props) {
                     <div className={styles.content_title}>
                         <span>진행중</span>
                     </div>
-                    <div className={styles.raffle_list}>
-                        <div className={styles.raffle_list_info}>
-                            <div className={styles.raffle_round}>{props.raffleInfo?.round}회차</div>
-                            <br/>
-                            {anvUtils.YYYYMMDDHIS(props.raffleInfo?.start_date)}
-                            ~ {anvUtils.YYYYMMDDHIS(props.raffleInfo?.end_date)}
-                        </div>
-                        <div className={styles.raffle_list_item_box}>
-                            <h3>진행상품</h3>
-                            {
-                                props.raffleList?.map((item, index) => (
-                                    <div key={index} className={styles.raffle_list_item}>
-                                        <div className={styles.raffle_list_item_left}>
-                                            <img src={item.image_url} alt="item img"/>
+                    {
+                        props.raffleInfo.used &&
+                        <div className={styles.raffle_list}>
+                            <div className={styles.raffle_list_info}>
+                                <div className={styles.raffle_round}>{props.raffleInfo?.round}회차</div>
+                                <br/>
+                                {anvUtils.YYYYMMDDHIS(props.raffleInfo?.start_date)}
+                                ~ {anvUtils.YYYYMMDDHIS(props.raffleInfo?.end_date)}
+                            </div>
+                            <div className={styles.raffle_list_item_box}>
+                                <h3>진행상품</h3>
+                                {
+                                    props.raffleList?.map((item, index) => (
+                                        <div key={index} className={styles.raffle_list_item}>
+                                            <div className={styles.raffle_list_item_left}>
+                                                <img src={item.image_url} alt="item img"/>
+                                            </div>
+                                            <div className={styles.raffle_list_item_right}>
+                                                {item.title} : {item.price} <br/>
+                                                <span
+                                                    className={styles.raffle_list_item_span}>응모현황 : {item.enter}</span>
+                                            </div>
                                         </div>
-                                        <div className={styles.raffle_list_item_right}>
-                                            {item.title} : {item.price} <br/>
-                                            <span className={styles.raffle_list_item_span}>응모현황 : {item.enter}</span>
-                                        </div>
-                                    </div>
-                                ))
-                            }
+                                    ))
+                                }
+                            </div>
+                            <div className={styles.raffle_list_button_box}>
+                                <button onClick={() => raffleEnd(props.raffleInfo?.round)}
+                                        className={styles.raffle_btn}>래플 마감
+                                </button>
+                                <button onClick={() => raffleCancel(props.raffleInfo?.round)}
+                                        className={styles.disable_btn}>래플 취소
+                                </button>
+                            </div>
                         </div>
-                        <div className={styles.raffle_list_button_box}>
-                            <button onClick={()=> raffleEnd(props.raffleInfo?.round)} className={styles.raffle_btn}>래플 마감</button>
-                            <button onClick={()=> raffleCancel(props.raffleInfo?.round)} className={styles.disable_btn}>래플 취소</button>
-                        </div>
-                    </div>
+                    }
                 </div>
                 {/*종료*/}
                 <div className={styles.active_raflle_box}>
@@ -186,13 +204,20 @@ function RaffleConfig(props) {
                                                 </div>
                                                 <div className={styles.raffle_list_item_right}>
                                                     {item2.title}<br/>
-                                                    <span className={styles.raffle_list_item_span}>응모현황 : {item2.enter}</span>
-                                                    <button onClick={ () => prizeInfo(item.round, item2)} className={styles.raffle_list_item_button}>당첨정보</button>
-                                                    <button onClick={ () => viewAddressFormFadeIn(item2.tokenId, item2.is_need_address)} className={styles.raffle_list_item_button}>배송신청현황</button>
+                                                    <span
+                                                        className={styles.raffle_list_item_span}>응모현황 : {item2.enter}</span>
+                                                    <button onClick={() => prizeInfo(item.round, item2)}
+                                                            className={styles.raffle_list_item_button}>당첨정보
+                                                    </button>
+                                                    <button
+                                                        onClick={() => viewAddressFormFadeIn(item2.tokenId, item2.is_need_address)}
+                                                        className={styles.raffle_list_item_button}>배송신청현황
+                                                    </button>
                                                     {item2.is_complete === 'Y' ? (
                                                         <span className={styles.raffle_list_item_span2}>발송완료</span>
-                                                    ):(
-                                                        <button onClick={() => raffleItemShippingEnd(item.round, item2)} className={styles.raffle_list_item_button}>발송완료처리</button>
+                                                    ) : (
+                                                        <button onClick={() => raffleItemShippingEnd(item.round, item2)}
+                                                                className={styles.raffle_list_item_button}>발송완료처리</button>
                                                     )}
                                                 </div>
                                             </div>
@@ -250,7 +275,9 @@ function RaffleConfig(props) {
                 </Modal.Footer>
             </Modal>
             {/*배송정보 확인 모달*/}
-            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId} postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts} setNftTokenId={setProductTokenId}/>
+            <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId}
+                          postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts}
+                          setNftTokenId={setProductTokenId}/>
             <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
         </>
     )

@@ -12,7 +12,6 @@ import Pagination from "../common/Pagination";
 
 function MyPage(props) {
     const RAFFLE_NFT_CONTRACT_ADDRESS = contracts['raffle_nft_contract'][props.networkId];
-    const contractAddress = "0xa3c368148327a57d05fdeb81f1a8c8ee1884305f";
     const [myRaffleList, setMyRaffleList] = useState([]);
     const [productTokenId, setProductTokenId] = useState(); //선택한 상품
     const [product, setProduct] = useState(); //선택한 상품
@@ -138,7 +137,6 @@ function MyPage(props) {
                     gasPrice,
                 }).then(async (result) => {
                     const saveTransactionData = {
-                        contractAddress,
                         tokenId: nftToken,
                         ownerId: props.accounts,
                         transactionHash: result.transactionHash,
@@ -163,7 +161,6 @@ function MyPage(props) {
         }
         modalClose();
     }
-
     const agreeCheck = (agree) => {
         if (agree) {
             setAgreeState(true);
