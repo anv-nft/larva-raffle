@@ -191,8 +191,8 @@ function RaffleConfig(props) {
                                 <div className={styles.raffle_list_info}>
                                     <div className={`${styles.raffle_round} ${styles.disable}`}>{item.round}회차</div>
                                     <br/>
-                                    {item.start_date}
-                                    ~ {item.end_date}
+                                    {anvUtils.YYYYMMDDHIS(item.start_date)}
+                                    ~ {anvUtils.YYYYMMDDHIS(item.end_date)}
                                 </div>
                                 <div className={styles.raffle_list_item_box2}>
                                     <h3>진행상품</h3>
