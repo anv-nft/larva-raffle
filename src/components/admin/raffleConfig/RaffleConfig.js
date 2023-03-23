@@ -44,8 +44,8 @@ function RaffleConfig(props) {
     async function raffleEnd(round) {
         if (window.confirm('정말 마감하시겠습니까?')) {
             try {
-                const result = await POST(`/api/v1/raffle/end`, {round}, props.adminApiToken);
                 setShowLoading(true);
+                const result = await POST(`/api/v1/raffle/end`, {round}, props.adminApiToken);
                 if (result.result === 'success') {
                     setAlerts(`${round}회차 래플이 마감되었습니다.`);
                     setShowAlertModal(true);
@@ -65,8 +65,8 @@ function RaffleConfig(props) {
     async function raffleCancel(round) {
         if (window.confirm('정말 취소하시겠습니까?')) {
             try {
-                const result = await POST(`/api/v1/raffle/cancel`, {round}, props.adminApiToken);
                 setShowLoading(true);
+                const result = await POST(`/api/v1/raffle/cancel`, {round}, props.adminApiToken);
                 if (result.result === 'success') {
                     setAlerts(`${round}회차 래플이 취소되었습니다.`);
                     setShowAlertModal(true);
@@ -265,7 +265,7 @@ function RaffleConfig(props) {
                             {prizeArray[2]}</p>
                         <p className="alert_msg">
                             당첨 트렌젝션<br/>
-                            {prizeArray[4]}</p>
+                            {prizeArray[3]}</p>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="alert_box">

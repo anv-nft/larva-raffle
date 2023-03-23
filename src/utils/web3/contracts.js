@@ -1,7 +1,7 @@
 const contracts = {
     raffle_contract: {
         1001: "0xb9C1061367ddE69fAC9695848fD9E00C31302a41",  // klaytn testnet
-        8217: "0x3585A3bee2c410bAbe12D9EE0F61F71Aea7448D4",  // klaytn mainnet
+        8217: "0xA1fBA28C53fA38feF561235fb757C6c1cE842eb5",  // klaytn mainnet
     },
     raffle_nft_contract: {
         1001: "0x5E70697Fa894cE9E89782075f035EE26c924381e",  // klaytn testnet
