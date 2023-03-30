@@ -12,7 +12,7 @@ function ShippingView({shippingView, setShippingView, productTokenId, setProduct
     const viewModalClose = () => {
         setViewModalShow(false);
         setShippingView(false);
-        setProductTokenId()
+        setProductTokenId('');
     }
     useEffect(() => {
         if(productTokenId){
@@ -44,7 +44,7 @@ function ShippingView({shippingView, setShippingView, productTokenId, setProduct
                             <label>연락처</label>
                             {viewForm[1]}
                         </div>
-                        {postUse === 'Y' &&
+                        {postUse &&
                             <div className={styles.pop_form}
                                  style={{display: "flex", borderBottom: "3px solid #999"}}>
                                 <label>주소</label>

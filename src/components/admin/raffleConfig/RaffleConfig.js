@@ -277,7 +277,7 @@ function RaffleConfig(props) {
             {/*배송정보 확인 모달*/}
             <ShippingView shippingView={shippingView} setShippingView={setShippingView} productTokenId={productTokenId}
                           postUse={postUseState} apiToken={props.adminApiToken} address={props.accounts}
-                          setNftTokenId={setProductTokenId}/>
+                          setProductTokenId={setProductTokenId}/>
             <LoadingModal showLoading={showLoading} setShowLoading={setShowLoading}/>
         </>
     )
