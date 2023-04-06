@@ -20,8 +20,8 @@ function RaffleAdd(props) {
     }
 
     function addItem() {
-        if(itemCount === 10){
-            setAlerts('상품은 최대 10개 까지만 등록 가능합니다.');
+        if(itemCount === 20){
+            setAlerts('상품은 최대 20개 까지만 등록 가능합니다.');
             setShowAlertModal(true);
             return false;
         }
